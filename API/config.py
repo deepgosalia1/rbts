@@ -1,70 +1,76 @@
-#CONNECTION CONFIGURATIONS FOR AWS/ADLS
-import os, uuid, sys
-from azure.storage.filedatalake import DataLakeServiceClient
-from azure.core._match_conditions import MatchConditions
-from azure.storage.filedatalake._models import ContentSettings
-import pandas as pd
+#Establish connection to AzureSQL
 
-ADLS = {
-    "ADLS_name" : '',
-    "ADLS_key" : ''
-}
+import pyodbc
+import textwrap
 
-def initialize_storage_account(self):
+#specify driver
+driver = '{ODBC Driver 17 for SQL Server}'
 
-        try:  
-            self.service_client = DataLakeServiceClient(account_url="{}://{}.dfs.core.windows.net".format(
-                "https", ADLS["ADLS_name"]), credential=ADLS["ADLS_key"])
-        
-        except Exception as e:
-            print(e)
+#specify server name and Database name
+server_name =  ''
+database_name = ''
 
-def list_directory_contents(self):
-        try:
-            
-            file_system_client = self.service_client.get_file_system_client(file_system="snowflake-synapse-dm")
+#create server URL
+server = ''
 
-            paths = file_system_client.get_paths(path="data")
+#define username and password
+username = ''
+password = ''
 
-            for path in paths:
-                print(path.name + '\n')
+#create the full connection string
+connection_string = textwrap.dedent('''
+    Driver={driver};
+    Server={server};
+    Database={database};
+    Uid={username};
+    Pwd={password};
+    Encrypt=yes;
+    TrustServerCertificate=no;
+    Connection Timeout=30;
+'''.format(
+    driver=driver,
+    server=server,
+    database=database_name,
+    username=username,
+    password=password
+))
 
-        except Exception as e:
-            print("111 Error = ", e)
+#Create new pyodbc connection object
+cnxn: pyodbc.Connection = pyodbc.connect(connection_string)
 
+#Create a new Cursor object from connection
+crsr: pyodbc.Cursor = cnxn.cursor()
 
-def download_file_from_directory(self):
+#Define a Select query for test
+select_sql = "SELECT * FROM [table_name]"
 
+#Executing the query
+crsr.execute(select_sql)
+##INSERT##
+#define an insert query
+insert_sql = "INSERT INTO [table_name] (attributes) VALUES (?,?,?)"
 
-    try:
-        file_system_client = self.service_client.get_file_system_client(file_system=self.container)
+#Define records
+records = [
+    ('ABX','ccn','400'),
+    ('ABC','csxx','600')
+]
 
-        directory_client = file_system_client.get_directory_client(self.directory)
-        
-        file_client = directory_client.get_file_client(self.filename)
+#Define the datatypes of input values
+crsr.setinputsize([
+    (pyodbc.SQL_VARCHAR,50,0),
+    (pyodbc.SQL_VARCHAR,50,0)
+])
 
-        #print("file_client = ", type(file_client))
+#Execute the insert statement
+crsr.executemany(insert_sql,records)
+##
 
-        download = file_client.download_file()    
+#Commit the transaction to see output in DB
+crsr.commit()
 
-        #print("download = ", dir(download))
-        downloaded_bytes = download.readall()    
+#Grab the data
+print(crsr.fetchall())
 
-        # To convert Bytes to pandas Dataframe -----------------
-        df = pd.read_csv(BytesIO(downloaded_bytes), encoding='unicode_escape')
-        #print("df =, "df.head())
-
-    # To convert Bytes to pandas Dataframe -----------------
-        #s=str(downloaded_bytes, 'ISO-8859-1')
-        #data = StringIO(s) 
-        #df = pd.read_csv(data)
-
-    # To download the file locally ----------
-        # local_file = open("orders.csv",'wb')
-        # local_file.write(downloaded_bytes)
-        # local_file.close()
-
-        return df
-
-    except Exception as e:
-        print("Error = ", e)
+#Close connection once done
+cnxn.close()
