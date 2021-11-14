@@ -4,8 +4,14 @@ import { withStyles } from '@mui/styles'
 import { Box, Text } from 'grommet';
 import { getBTCPrice } from '../ServerApi';
 import styled from 'styled-components';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import { Button } from '@tsamantanis/react-glassmorphism'
+import '@tsamantanis/react-glassmorphism/dist/index.css'
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 const styles = {
     root: {
         background: "black"
@@ -18,18 +24,22 @@ const TradeOptions = ['Buy', 'Sell'];
 const commissionOptions = ['BTC', 'Fiat']
 
 function TradingView(props) {
+    const { traderView = false, customerName = 'ABC' } = props
     const [btc, setBTC] = useState(64646)
     const [balance, setBalance] = useState(123)
     const [amount, setAmount] = useState('')
+    const [snackMessage, setSnackMessage] = useState('')
     const [incorrectInput, SetIncorrect] = useState(false)
     async function currPrice() {
         return await getBTCPrice().then(val => setBTC(val.bpi.USD.rate_float))
     }
     const [tradeSelectedIndex, setTradeSelectedIndex] = React.useState(1);
     const [commSelectedIndex, setCommSelectedIndex] = React.useState(1);
-
-    const executeTrade = (amount) => {
+    const [open, setSnack] = useState(false)
+    const executeTrade = async (amount) => {
         console.log('Trading for ...', amount)
+        await setSnack(true)
+        setSnackMessage('Transaction Confirmed.')
     }
     const handleTradeMenuItemClick = (event, index) => {
         setTradeSelectedIndex(index);
@@ -45,7 +55,13 @@ function TradingView(props) {
             SetIncorrect(false)
         }
     }
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
 
+        setSnack(false);
+    };
     useEffect(() => {
         // currPrice() // fetching btc price
     }, [])
@@ -56,6 +72,7 @@ function TradingView(props) {
             flexDirection={'row'}
             justifyContent={'center'}
             style={{
+                // flex:1,
                 height: '100%',
                 width: '100%',
                 padding: 10,
@@ -65,6 +82,10 @@ function TradingView(props) {
                     // backgroundColor:'green'
                 }}
             >
+                <LogoutButton text="Logout" onClick={() => {
+                    //take user to login page.
+                }} />
+
                 <BTCPriceDiv>
                     <Boxx style={{}}>
                         <BTCText>
@@ -72,74 +93,80 @@ function TradingView(props) {
                         </BTCText>
                     </Boxx>
                 </BTCPriceDiv>
-                <div style={{ height: 'fit-content', display:'flex', justifyContent:'center', marginTop: 100 }}>
+                <div style={{ height: 'fit-content', display: 'flex', justifyContent: 'center', marginTop: 100 }}>
                     <TradeDiv>
-                    <DivHeader>
-                        <HeaderText>Balance : {balance}</HeaderText>
-                    </DivHeader>
-                    <TradeBox>
-                        <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-                            <HeaderText>Enter Amount</HeaderText>
-                            <div
-                                style={{
-                                    marginInline: 30, display: 'flex',
-                                }}
-                            >
-                                <InputContainer
-                                    value={amount}
-                                    error={incorrectInput}
-                                    placeholder={'0'}
-                                    inputMode={'decimal'}
-                                    onChange={(val) => {
-                                        setAmount(val.target.value.replace(/[^0-9\.]/g, ''))
+                        <DivHeader>
+                            <HeaderText>Balance : {balance}</HeaderText>
+                            {traderView ? <HeaderText>C_Name : {customerName}</HeaderText> : <></>}
+                        </DivHeader>
+                        <TradeBox>
+                            <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+                                <HeaderText>Enter Amount</HeaderText>
+                                <div
+                                    style={{
+                                        marginInline: 30, display: 'flex',
                                     }}
-                                    onBlur={(val => checkCorrectNumber(val.target.value))}
-                                />
+                                >
+                                    <InputContainer
+                                        value={amount}
+                                        error={incorrectInput}
+                                        placeholder={'0'}
+                                        inputMode={'decimal'}
+                                        onChange={(val) => {
+                                            setAmount(val.target.value.replace(/[^0-9\.]/g, ''))
+                                        }}
+                                        onBlur={(val => checkCorrectNumber(val.target.value))}
+                                    />
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'center', }}>
+                                    <MenuList id="split-button-menu">
+                                        {TradeOptions.map((option, index) => (
+                                            <MenuItem
+                                                key={option}
+                                                style={{
+                                                    border: index === tradeSelectedIndex ? '1px solid black' : 'none',
+                                                    color: 'white',
+                                                    backdropFilter: 'blur(10px)',
+                                                }}
+                                                selected={index === tradeSelectedIndex}
+                                                onClick={(event) => handleTradeMenuItemClick(event, index)}
+                                            >
+                                                {option}
+                                            </MenuItem>
+                                        ))}
+                                    </MenuList>
+                                </div>
                             </div>
-                            <div style={{ display: 'flex', justifyContent: 'center', }}>
-                                <MenuList id="split-button-menu">
-                                    {TradeOptions.map((option, index) => (
+                            <div style={{ display: 'flex', justifyContent: 'space-between', }}>
+                                <HeaderText>Commision Method</HeaderText>
+                                <MenuList style={{ display: 'flex', flexDirection: 'row', }}>
+                                    {commissionOptions.map((option, index) => (
                                         <MenuItem
                                             key={option}
                                             style={{
-                                                border: index === tradeSelectedIndex ? '1px solid black' : 'none',
+                                                border: index === commSelectedIndex ? '1px solid red' : 'none',
                                                 color: 'white',
                                                 backdropFilter: 'blur(10px)',
                                             }}
-                                            selected={index === tradeSelectedIndex}
-                                            onClick={(event) => handleTradeMenuItemClick(event, index)}
+                                            selected={index === commSelectedIndex}
+                                            onClick={(event) => handleCommMenuItemClick(event, index)}
                                         >
                                             {option}
                                         </MenuItem>
                                     ))}
                                 </MenuList>
                             </div>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', }}>
-                            <HeaderText>Commision Method</HeaderText>
-                            <MenuList style={{ display: 'flex', flexDirection: 'row', }}>
-                                {commissionOptions.map((option, index) => (
-                                    <MenuItem
-                                        key={option}
-                                        style={{
-                                            border: index === commSelectedIndex ? '1px solid red' : 'none',
-                                            color: 'white',
-                                            backdropFilter: 'blur(10px)',
-                                        }}
-                                        selected={index === commSelectedIndex}
-                                        onClick={(event) => handleCommMenuItemClick(event, index)}
-                                    >
-                                        {option}
-                                    </MenuItem>
-                                ))}
-                            </MenuList>
-                        </div>
-                        <ConfirmButton onClick={() => {
-                            executeTrade(amount)
-                        }}>Confirm</ConfirmButton>
-                    </TradeBox>
-                </TradeDiv></div>
+                            <ConfirmButton onClick={async () => {
+                                await executeTrade(amount)
+                            }}>Confirm</ConfirmButton>
+                        </TradeBox>
+                    </TradeDiv></div>
             </Grid>
+            <Snackbar open={open} autoHideDuration={1500} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    Transaction recorded.
+                </Alert>
+            </Snackbar>
         </Grid >
     )
 }
@@ -172,12 +199,13 @@ text-shadow:
 -1px -1px 0 #000,  
 1px -1px 0 #000,
 -1px 1px 0 #000,
-1px 1px 0 #000;`;
+1px 1px 0 #000;
+`;
 
 const TradeDiv = styled.div`
 background: linear-gradient(180deg,#48423e,#373030);
 display: flex;
-width: 40%;
+// width: 40%;
 padding: 5px;
 flex-direction: column;
 border-radius: 5px;
@@ -244,4 +272,8 @@ color: white;
     opacity: 0.5;
     backdrop-filter: blur(35px);
 };
+`;
+
+const LogoutButton = styled(Button)`
+
 `;

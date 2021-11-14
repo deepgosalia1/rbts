@@ -2,11 +2,13 @@ import './App.css';
 import TradingView from './components/TradingPage';
 import { Grid } from '@mui/material';
 import styled from 'styled-components';
+import Snackbar from '@mui/material/Snackbar';
+import TraderView from './components/TraderView';
 
 function App() {
   return (
     <MainGrid container flex flexDirection={'row'} style={{ height: '100vh' }}>
-      <Grid item md={2} lg={2}
+      {/* <Grid item md={2} lg={2}
         style={{
           // backgroundColor: 'green',
           border: '2px solid white',
@@ -18,15 +20,16 @@ function App() {
           Nav
         </div>
 
-      </Grid>
-      <Grid item md={10} lg={10}
+      </Grid> */}
+      <Grid item md={12} lg={12}
         style={{
           backgroundColor: '#000000',
           backgroundImage: 'linear-gradient(147deg, #000000 0%, #04619f 74%)',
           border: '2px solid white',
         }}
       >
-        <TradingView />
+        {/* <TradingView /> */}
+        <TraderView/>
       </Grid>
     </MainGrid>
 
