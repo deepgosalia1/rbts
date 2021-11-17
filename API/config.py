@@ -3,49 +3,26 @@
 import pyodbc
 import textwrap
 
-#specify driver
-driver = '{ODBC Driver 17 for SQL Server}'
+server = 'appbt.database.windows.net'
+database = 'bitcoin'
+username = 'hita'
+password = 'Gdhan@1234'   
+driver= '{ODBC Driver 17 for SQL Server}'
 
-#specify server name and Database name
-server_name =  ''
-database_name = ''
 
-#create server URL
-server = ''
 
-#define username and password
-username = ''
-password = ''
+conn =  pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password,trusted_connection='no')
 
-#create the full connection string
-connection_string = textwrap.dedent('''
-    Driver={driver};
-    Server={server};
-    Database={database};
-    Uid={username};
-    Pwd={password};
-    Encrypt=yes;
-    TrustServerCertificate=no;
-    Connection Timeout=30;
-'''.format(
-    driver=driver,
-    server=server,
-    database=database_name,
-    username=username,
-    password=password
-))
-
-#Create new pyodbc connection object
-cnxn: pyodbc.Connection = pyodbc.connect(connection_string)
 
 #Create a new Cursor object from connection
-crsr: pyodbc.Cursor = cnxn.cursor()
+cursor = conn.cursor()
 
 #Define a Select query for test
-select_sql = "SELECT * FROM [table_name]"
+select_sql = "SELECT * FROM sys.tables"
 
 #Executing the query
-crsr.execute(select_sql)
+cursor.execute(select_sql)
+cursor.execute("SELECT * FROM sys.columns")
 ##INSERT##
 #define an insert query
 insert_sql = "INSERT INTO [table_name] (attributes) VALUES (?,?,?)"
@@ -56,21 +33,16 @@ records = [
     ('ABC','csxx','600')
 ]
 
-#Define the datatypes of input values
-crsr.setinputsize([
-    (pyodbc.SQL_VARCHAR,50,0),
-    (pyodbc.SQL_VARCHAR,50,0)
-])
 
 #Execute the insert statement
-crsr.executemany(insert_sql,records)
+cursor.executemany(insert_sql,records)
 ##
 
 #Commit the transaction to see output in DB
-crsr.commit()
+cursor.commit()
 
 #Grab the data
-print(crsr.fetchall())
+print(cursor.fetchall())
 
 #Close connection once done
-cnxn.close()
+cursor.close()
