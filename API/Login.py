@@ -1,5 +1,5 @@
 import pandas
-import config as cg
+#import config as cg
 
 class Login:
     
