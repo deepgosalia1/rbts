@@ -1,5 +1,7 @@
-import pandas
-#import config as cg
+import pandas as pd
+from pandas.io import json
+import config as cg
+from flask import jsonify
 
 class Login:
     
@@ -8,7 +10,15 @@ class Login:
         self.username = username
         self.password = password
 
-    def testOutput(self): 
-        str =  f"Welcome user: {self.username} Password: {self.password}"
-        return str
+    def check_type(self):
+        conn = cg.connect_to_azure()
+        cursor = conn.cursor()
+        chk = f"SELECT * FROM [dbo].[user_accounts] WHERE username='{self.username}' and pass_hash='{self.password}'"
+        df = pd.read_sql(chk,conn)
+        #user_type = cursor.fetchone()[0]
+        # cursor.execute(chk)
+        # user_type = cursor.fetchone()
+        json_user_data = df.to_json(orient = "index")
+        parsed_json = json.loads(json_user_data)
+        return json.dumps(parsed_json)
     

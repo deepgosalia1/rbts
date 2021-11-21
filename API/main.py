@@ -15,7 +15,7 @@ def login():
     pass_hash = request.args.get('pass_hash')
     oLogin = Login.Login(uid,username,pass_hash)
     #Return validation creds
-    return oLogin.testOutput()
+    return oLogin.check_type()
 
 @app.route("/trade")
 def transaction():
