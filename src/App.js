@@ -1,26 +1,19 @@
 import './App.css';
-import TradingView from './components/TradingPage';
 import { Grid } from '@mui/material';
 import styled from 'styled-components';
-import Snackbar from '@mui/material/Snackbar';
 import TraderView from './components/TraderView';
+import Signup from './components/Signup';
+import Login from './components/Login';
+import { useEffect, useState } from 'react';
+import TradingPage from './components/TradingPage';
 
 function App() {
+  const [type, setType] = useState('T')
+  const logout = () => setType('')
+  useEffect(() => {
+  }, [])
   return (
     <MainGrid container flex flexDirection={'row'} style={{ height: '100vh' }}>
-      {/* <Grid item md={2} lg={2}
-        style={{
-          // backgroundColor: 'green',
-          border: '2px solid white',
-          borderColor: 'black',
-          height: '100%'
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'center', alignSelf: 'center' }}>
-          Nav
-        </div>
-
-      </Grid> */}
       <Grid item md={12} lg={12}
         style={{
           backgroundColor: '#000000',
@@ -29,7 +22,22 @@ function App() {
         }}
       >
         {/* <TradingView /> */}
-        <TraderView/>
+        {type === '' ? <Login
+          setLoginType={async (val) => {
+            setType(val)
+          }} /> :
+          type === 'M' ?
+            <>
+              {/* <ManagerView logout={logout}/> */}
+            </>
+            : type === 'T' ?
+              <>
+                <TraderView logout={logout}/>
+              </>
+              :
+              <><TradingPage logout={logout}/></>
+        }
+        {/* <Signup/> */}
       </Grid>
     </MainGrid>
 

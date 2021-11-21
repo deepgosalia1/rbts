@@ -2,6 +2,7 @@ from flask import Flask,request,jsonify
 #from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from flask_cors import CORS
 import Login
+import json
 
 #initialize flask API
 app = Flask(__name__)
@@ -9,6 +10,7 @@ api = CORS(app)
 
 @app.route("/login",methods=['POST', 'GET'])
 def login():
+    # print('req',json.load(request.args))
     uid = request.args.get('uid')
     # or use request.form to get body
     username = request.args.get('username')

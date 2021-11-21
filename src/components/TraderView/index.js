@@ -18,13 +18,13 @@ const styles = {
     }
 };
 
-const TraderView = () => {
+const TraderView = (props) => {
     return (
         <>
             <Grid container flex flexDirection={'row'}>
                 {/* <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}></Grid> */}
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <TradingPage />
+                    <TradingPage logout={props.logout}/>
                 </Grid>
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
                     <SearchPage/>

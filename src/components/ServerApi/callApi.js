@@ -6,7 +6,7 @@ export async function callApi({ endpoint, method = 'get', body = undefined, toke
     if (fullUrl) {
         url = endpoint;
     } else {
-        url = `/api/${endpoint}`;
+        url = `http://192.168.1.149:4000/${endpoint}`;
     }
 
     const headers = {
@@ -23,6 +23,6 @@ export async function callApi({ endpoint, method = 'get', body = undefined, toke
                         return Promise.reject(json)
                     });
             }
-            return response.json();
+            return response.json() || response.text();
         });
 }

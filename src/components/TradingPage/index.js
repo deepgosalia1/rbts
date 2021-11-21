@@ -83,7 +83,7 @@ function TradingView(props) {
                 }}
             >
                 <LogoutButton text="Logout" onClick={() => {
-                    //take user to login page.
+                    props?.logout()
                 }} />
 
                 <BTCPriceDiv>
