@@ -4,7 +4,10 @@ import { withStyles } from '@mui/styles'
 import { Box, Text } from 'grommet';
 import { getBTCPrice } from '../ServerApi';
 import styled from 'styled-components';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import { Button } from '@tsamantanis/react-glassmorphism'
+import '@tsamantanis/react-glassmorphism/dist/index.css'
 
 const styles = {
     root: {
@@ -14,7 +17,13 @@ const styles = {
         color: "white"
     }
 };
-function Signup(props) {
+const UserOptions = ['Trader', 'Client','Manager'];
+//const commissionOptions = ['BTC', 'Fiat']
+
+function TradingView(props) {
+    //const [btc, setBTC] = useState(64646)
+    //const [balance, setBalance] = useState(123)
+    //const [amount, setAmount] = useState('')
     const [Firstname, setFirstname] = useState('');
     const [Lastname, setLastname] = useState('');
     const [userType, setuserType] = useState('');
@@ -29,15 +38,31 @@ function Signup(props) {
     const [Zip, setZip] = useState('');
     const [Login, setLogin] = useState('');
     const [incorrectInput, SetIncorrect] = useState(false)
+    const [snackMessage, setSnackMessage] = useState('')
+    const [open, setSnack] = useState(false)
 
-    
-    const executeTrade = (Login) => {
-        console.log('Logging in...', Login)
+
+
+
+    /*async function currPrice() {
+        return await getBTCPrice().then(val => setBTC(val.bpi.USD.rate_float))
+    }*/
+    const [UserSelectedIndex, setUserSelectedIndex] = React.useState(1);
+    //const [commSelectedIndex, setCommSelectedIndex] = React.useState(1);
+    const executeTrade = async (Login) => {
+        console.log('Logging in ...', Login)
+        await setSnack(true)
+        setSnackMessage('Logged in.')
     }
     const getUserType = (userType) => {
         console.log('...', userType)
     }
-    
+    const handleUserMenuItemClick = (event, index) => {
+        setUserSelectedIndex(index);
+    };
+    /*const handleCommMenuItemClick = (event, index) => {
+        setCommSelectedIndex(index);
+    };*/
     function checkCorrectNumber(value) {
         var regexp = /^\d+(\.\d+)?$/;
         if (value && !regexp.test(value)) {
@@ -46,9 +71,7 @@ function Signup(props) {
             SetIncorrect(false)
         }
     }
-    /*useEffect(() => {
-        // currPrice() // fetching btc price
-    }, [])*/
+    
     return (
         <Grid
             container
@@ -288,43 +311,28 @@ function Signup(props) {
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row',marginTop: 10 }}>
                                 <HeaderText>Type of User</HeaderText>
-                                <div className="radio-buttons"
-                                    style={{
-                                        marginInline: 30, display: 'flex'
-                                    }}
-                                >
-                                <input
-                                    id="Trader"
-                                    value="Trader"
-                                    name="usertype"
-                                    type="radio"
-                                />
-                                <Radiobtn onClick={() => {
-                                    getUserType(userType)
-                                }}> Trader</Radiobtn>
-                                <input
-                                    id="Client"
-                                    value="Client"
-                                    name="usertype"
-                                    type="radio"                             
-                                />
-                                <Radiobtn onClick={() => {
-                                    getUserType(userType)
-                                }}> Client</Radiobtn>
-                                <input
-                                    id="Manager"
-                                    value="Manager"
-                                    name="usertype"
-                                    type="radio"                             
-                                />
-                                <Radiobtn onClick={() => {
-                                    getUserType(userType)
-                                }}> Manager</Radiobtn>
-                                </div>
+
+                                <Menu id="split-button-menu">
+                                        {UserOptions.map((option, index) => (
+                                            <MenuItem
+                                                key={option}
+                                                style={{
+                                                    border: index === UserSelectedIndex ? '1px solid black' : 'none',
+                                                    color: 'white',
+                                                    backdropFilter: 'blur(10px)',
+                                                }}
+                                                selected={index === UserSelectedIndex}
+                                                onClick={(event) => handleUserMenuItemClick(event, index)}
+                                            >
+                                                {option}
+                                            </MenuItem>
+                                        ))}
+                                    </Menu>
+                                
                         </div>
-                        <ConfirmButton onClick={() => {
-                            executeTrade(Login)
-                        }}>Login</ConfirmButton>
+                        <ConfirmButton onClick={async () => {
+                                await executeTrade(Login)
+                            }}>Login</ConfirmButton>
                     </LoginBox>
                 </LoginDiv></div>
             </Grid>
@@ -332,7 +340,7 @@ function Signup(props) {
     )
 }
 
-export default withStyles(styles)(Signup);
+export default withStyles(styles)(TradingView);
 
 const Boxx = styled(Box)`
 display: inline-block;
@@ -360,8 +368,7 @@ text-shadow:
 -1px -1px 0 #000,  
 1px -1px 0 #000,
 -1px 1px 0 #000,
-1px 1px 0 #000;
-`;
+1px 1px 0 #000;`;
 
 
 const Addtext = styled(Text)`
@@ -375,8 +382,7 @@ text-shadow:
 -1px -1px 0 #000,  
 1px -1px 0 #000,
 -1px 1px 0 #000,
-1px 1px 0 #000;
-`;
+1px 1px 0 #000;`;
 
 const LoginDiv = styled.div`
 background: linear-gradient(180deg,#48423e,#373030);
@@ -409,7 +415,8 @@ width: 150px; height: 50px;
 align-items: center;
 `;
 
-const Radiobtn = styled(Text)`
+
+const Menu = styled(Text)`
 font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 font-weight: 300;
 font-size: 18px;
