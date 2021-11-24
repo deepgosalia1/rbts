@@ -26,7 +26,7 @@ class Manager:
     
     def retrieve_transaction_range_data(self):
         conn = cg.connect_to_azure()
-        qry = f"SELECT * FROM [dbo].[transactions]"
+        qry = f"SELECT * FROM [dbo].[transactions] WHERE txdate="
         df = pd.read_sql(qry,conn)
         #user_type = cursor.fetchone()[0]
         # cursor.execute(chk)

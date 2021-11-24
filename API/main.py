@@ -19,7 +19,11 @@ def login():
     pass_hash = data['pass_hash']
     oLogin = Login.Login(username,pass_hash)
     #Return validation creds from API
-    return oLogin.check_type()
+    chk_type = oLogin.check_type()
+    getc_details = oLogin.get_client_data()
+    # gett_details = oLogin.get_trader_data()
+    return getc_details
+
 
 # @app.route("/trade")
 # def transaction():
