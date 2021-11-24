@@ -26,8 +26,8 @@ function Login(props) {
     const executeLogin = async () => {
         console.log('Logging in ...')
         let pass_hash = await bcrypt.hash(Password, await bcrypt.genSalt(6));
-        await loginUserAPI('1',Username, pass_hash)
-        console.log('psh',pass_hash)
+        await loginUserAPI(Username, pass_hash).then((res) => { console.log('response', res) })
+        console.log('psh', pass_hash)
         await setSnack(true)
         setSnackMessage('Logged in.')
     }
@@ -73,57 +73,57 @@ function Login(props) {
                         </HeadText>
                     </Boxx>
                 </Heading>
-                <div style={{ height: 'fit-content', display:'flex', justifyContent:'center', marginTop: 100 }}>
+                <div style={{ height: 'fit-content', display: 'flex', justifyContent: 'center', marginTop: 100 }}>
                     <LoginDiv>
-                    <DivHeader>
-                        <HeaderText style={{ display: 'flex', alignItems: 'center', flexDirection: 'row',marginTop: 10 }}>Login</HeaderText>
-                    </DivHeader>
-                    <LoginBox>
-                        <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-                            <HeaderText>Username</HeaderText>
-                            <div
-                                style={{
-                                    marginInline: 30, display: 'flex',
-                                }}
-                            >
-                                <InputContainer
-                                    value={Username}
-                                    error={incorrectInput}
-                                    placeholder={'Username'}
-                                    inputMode={'text'}
-                                    onChange={(val) => {
-                                        setUsername(val.target.value)
+                        <DivHeader>
+                            <HeaderText style={{ display: 'flex', alignItems: 'center', flexDirection: 'row', marginTop: 10 }}>Login</HeaderText>
+                        </DivHeader>
+                        <LoginBox>
+                            <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+                                <HeaderText>Username</HeaderText>
+                                <div
+                                    style={{
+                                        marginInline: 30, display: 'flex',
                                     }}
+                                >
+                                    <InputContainer
+                                        value={Username}
+                                        error={incorrectInput}
+                                        placeholder={'Username'}
+                                        inputMode={'text'}
+                                        onChange={(val) => {
+                                            setUsername(val.target.value)
+                                        }}
                                     // onBlur={(val => checkCorrectNumber(val.target.value))}
-                                />
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-                            <HeaderText>Password</HeaderText>
-                            <div
-                                style={{
-                                    marginInline: 30, display: 'flex',
-                                }}
-                            >
-                                <InputContainer
-                                    value={Password}
-                                    error={incorrectInput}
-                                    placeholder={'Password'}
-                                    type={'password'}
-                                    inputMode={'text'}
-                                    onChange={(val) => {
-                                        setPassword(val.target.value)
-                                        // console.log(val)
+                            <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+                                <HeaderText>Password</HeaderText>
+                                <div
+                                    style={{
+                                        marginInline: 30, display: 'flex',
                                     }}
+                                >
+                                    <InputContainer
+                                        value={Password}
+                                        error={incorrectInput}
+                                        placeholder={'Password'}
+                                        type={'password'}
+                                        inputMode={'text'}
+                                        onChange={(val) => {
+                                            setPassword(val.target.value)
+                                            // console.log(val)
+                                        }}
                                     // onBlur={(val => checkCorrectNumber(val.target.value))}
-                                />
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        <ConfirmButton onClick={() => {
-                            executeLogin(Login)
-                        }}>Confirm</ConfirmButton>
-                    </LoginBox>
-                </LoginDiv></div>
+                            <ConfirmButton onClick={() => {
+                                executeLogin(Login)
+                            }}>Confirm</ConfirmButton>
+                        </LoginBox>
+                    </LoginDiv></div>
             </Grid>
         </Grid >
     )

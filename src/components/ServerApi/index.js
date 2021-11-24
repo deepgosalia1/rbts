@@ -1,7 +1,8 @@
 import { callApi } from './callApi';
+import sha1 from 'sha1';
 
-export const loginUserAPI = async (uid,username, pass_hash) => {
-  return await callApi({endpoint:'login', method:'post', body:{uid,username,pass_hash}})
+export const loginUserAPI = async (username, pass_hash) => {
+  return await callApi({endpoint:'login', method:'post', body:{username,pass_hash:sha1(pass_hash)}})
 }
 
 export const getBTCPrice = async (id, token) => {

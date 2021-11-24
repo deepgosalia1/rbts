@@ -5,15 +5,15 @@ from flask import jsonify
 
 class Login:
     
-    def __init__(self,uid,username,password):
-        self.uid = uid
+    def __init__(self,username,password):
+        # self.uid = uid
         self.username = username
         self.password = password
 
     def check_type(self):
         conn = cg.connect_to_azure()
         cursor = conn.cursor()
-        chk = f"SELECT * FROM [dbo].[user_accounts] WHERE username='{self.username}' and pass_hash='{self.password}'"
+        chk = f"SELECT * FROM [dbo].[users] WHERE username='{self.username}' and pass_hash='{self.password}'"
         df = pd.read_sql(chk,conn)
         #user_type = cursor.fetchone()[0]
         # cursor.execute(chk)

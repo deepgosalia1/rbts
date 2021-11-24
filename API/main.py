@@ -11,11 +11,11 @@ api = CORS(app)
 @app.route("/login",methods=['POST', 'GET'])
 def login():
     # print('req',json.load(request.args))
-    uid = request.args.get('uid')
+    # uid = request.args.get('uid')
     # or use request.form to get body
     username = request.args.get('username')
     pass_hash = request.args.get('pass_hash')
-    oLogin = Login.Login(uid,username,pass_hash)
+    oLogin = Login.Login(username,pass_hash)
     #Return validation creds from API
     return oLogin.check_type()
 
