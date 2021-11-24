@@ -63,7 +63,8 @@ const columns = [
     },
 ];
 
-const SearchPage = () => {
+const SearchPage = (props) => {
+    const { Header = '', showSearch = true, showHeader = false } = props
     const [searchValue, setSearchvalue] = useState('')
     const [resultList, setResult] = useState(rows)
 
@@ -74,7 +75,10 @@ const SearchPage = () => {
     return (
         <>
             <DivHeader>
-                <SearchInput
+                {showHeader && <HeaderText>
+                    {Header}
+                </HeaderText>}
+                {showSearch && <SearchInput
                     placeholder="Search Clients..."
                     value={searchValue}
                     onChange={event => setSearchvalue(event.target.value)}
@@ -88,7 +92,7 @@ const SearchPage = () => {
                     // }}
                     color={'white'}
                     icon={<SearchAdvanced color={'grey'} />}
-                />
+                />}
                 <TableDiv>
                     <DataGrid
                         rows={rows}
@@ -130,6 +134,16 @@ color: rgba(255, 255, 255, 0.64);
 margin: 10px 0;
 display: flex;
 border: 2.5px solid linear-gradient(180deg,#48423e,#373030);
+`;
+
+const HeaderText = styled(Text)`
+font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+font-weight: 400;
+font-size: 18px;
+line-height: 20px;
+color: rgba(255, 255, 255, 0.64);
+margin: 10px 0;
+display: flex;
 `;
 
 const TableDiv = styled.div`

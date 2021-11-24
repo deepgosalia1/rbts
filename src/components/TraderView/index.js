@@ -8,6 +8,7 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import TradingPage from '../TradingPage';
 import SearchPage from '../SearchPage';
+import ApprovalList from '../ApprovalList';
 
 const styles = {
     root: {
@@ -20,17 +21,24 @@ const styles = {
 
 const TraderView = (props) => {
     return (
-        <>
+        <Grid container flex flexDirection={'column'}>
             <Grid container flex flexDirection={'row'}>
-                {/* <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}></Grid> */}
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <TradingPage logout={props.logout}/>
+                    <TradingPage logout={props.logout} traderView = {true} />
                 </Grid>
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <SearchPage/>
+                    <SearchPage />
                 </Grid>
             </Grid>
-        </>
+            <Grid container flex flexDirection={'row'}>
+                <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
+                    <SearchPage showSearch={false} Header={'Recent Transactions'} showHeader/>
+                </Grid>
+                <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
+                    <ApprovalList />
+                </Grid>
+            </Grid>
+        </Grid>
     )
 }
 

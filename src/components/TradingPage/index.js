@@ -8,6 +8,12 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { Button } from '@tsamantanis/react-glassmorphism'
 import '@tsamantanis/react-glassmorphism/dist/index.css'
+import { Modal } from 'react-bootstrap';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -36,6 +42,10 @@ function TradingView(props) {
     const [tradeSelectedIndex, setTradeSelectedIndex] = React.useState(1);
     const [commSelectedIndex, setCommSelectedIndex] = React.useState(1);
     const [open, setSnack] = useState(false)
+    const [show, setShow] = useState(false);
+    const [type, setType] = useState('B')
+    const handleModalClose = () => setShow(false);
+    const handleShow = () => setShow(true);
     const executeTrade = async (amount) => {
         console.log('Trading for ...', amount)
         await setSnack(true)
@@ -66,108 +76,148 @@ function TradingView(props) {
         // currPrice() // fetching btc price
     }, [])
     return (
-        <Grid
-            container
-            display={'flex'}
-            flexDirection={'row'}
-            justifyContent={'center'}
-            style={{
-                // flex:1,
-                height: '100%',
-                width: '100%',
-                padding: 10,
-            }}>
-            <Grid item sm={12} md={12} lg={12}
+        <>
+            <Dialog open={show} onClose={handleModalClose} fullWidth color={'black'}>
+                <DialogTitle>Subscribe</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label={type === 'B' ? "BTC Amount" : "USD Amount"}
+                        type="decimal"
+                        fullWidth
+                        variant="filled"
+                        placeholder={`Enter the amount of ${type == 'B' ? 'BTC' : 'USD'} you want to ${type == 'B' ? 'purchase' : 'deposit'} at current price`}
+                    />
+                </DialogContent>
+                <DialogActions style={{backgroundColor:'lightGrey', display:'flex', justifyContent:'space-between'}}>
+                    <Text onClick={handleModalClose} color={'black'} style={{cursor:'pointer', padding: 10, display:'flex', color:'black', zIndex:5}}>Cancel</Text>
+                    <Text onClick={handleModalClose} color={'black'} style={{cursor:'pointer', padding: 10, display:'flex', color:'black', zIndex:5}}>Confirm</Text>
+                </DialogActions>
+            </Dialog>
+            <Grid
+                container
+                display={'flex'}
+                flexDirection={'row'}
+                justifyContent={'center'}
                 style={{
-                    // backgroundColor:'green'
-                }}
-            >
-                <LogoutButton text="Logout" onClick={() => {
-                    props?.logout()
-                }} />
+                    // flex:1,
+                    height: '100%',
+                    width: '100%',
+                    padding: 10,
+                }}>
+                <Grid item sm={12} md={12} lg={12}
+                    style={{
+                        // backgroundColor:'green'
+                    }}
+                >
+                    <LogoutButton text="Logout" onClick={() => {
+                        props?.logout()
+                    }} />
 
-                <BTCPriceDiv>
-                    <Boxx style={{}}>
-                        <BTCText>
-                            Current BTC price: ${btc}
-                        </BTCText>
-                    </Boxx>
-                </BTCPriceDiv>
-                <div style={{ height: 'fit-content', display: 'flex', justifyContent: 'center', marginTop: 100 }}>
-                    <TradeDiv>
-                        <DivHeader>
-                            <HeaderText>Balance : {balance}</HeaderText>
-                            {traderView ? <HeaderText>C_Name : {customerName}</HeaderText> : <></>}
-                        </DivHeader>
-                        <TradeBox>
-                            <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-                                <HeaderText>Enter Amount</HeaderText>
-                                <div
-                                    style={{
-                                        marginInline: 30, display: 'flex',
+                    <BTCPriceDiv>
+                        <Boxx style={{}}>
+                            <BTCText>
+                                Current BTC price: ${btc}
+                            </BTCText>
+                        </Boxx>
+                    </BTCPriceDiv>
+                    <div style={{ height: 'fit-content', display: 'flex', justifyContent: 'center', marginTop: 50 }}>
+                        <TradeDiv>
+                            <DivHeader>
+                                <HeaderText
+                                    style={{ textDecorationLine: !traderView ? 'underline' : 'none' }}
+                                    onClick={() => {
+                                        if (traderView) return
+                                        setType('B')
+                                        handleShow()
                                     }}
-                                >
-                                    <InputContainer
-                                        value={amount}
-                                        error={incorrectInput}
-                                        placeholder={'0'}
-                                        inputMode={'decimal'}
-                                        onChange={(val) => {
-                                            setAmount(val.target.value.replace(/[^0-9\.]/g, ''))
+                                >BTC Balance : {balance}
+                                </HeaderText>
+                                {/* {traderView ? <HeaderText>C_Name : {customerName}</HeaderText> : <></>} */}
+                                <HeaderText
+                                    style={{
+                                        textDecorationLine: !traderView ? 'underline' : 'none'
+                                    }}
+                                    onClick={() => {
+                                        if (traderView) return
+                                        setType('W')
+                                        handleShow()
+                                    }}
+                                >Wal Balance : {balance}
+                                </HeaderText>
+                            </DivHeader>
+                            <TradeBox>
+                                <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+                                    <HeaderText>Enter Amount</HeaderText>
+                                    <div
+                                        style={{
+                                            marginInline: 30, display: 'flex',
                                         }}
-                                        onBlur={(val => checkCorrectNumber(val.target.value))}
-                                    />
+                                    >
+                                        <InputContainer
+                                            value={amount}
+                                            error={incorrectInput}
+                                            placeholder={'0'}
+                                            inputMode={'decimal'}
+                                            onChange={(val) => {
+                                                setAmount(val.target.value.replace(/[^0-9\.]/g, ''))
+                                            }}
+                                            onBlur={(val => checkCorrectNumber(val.target.value))}
+                                        />
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'center', }}>
+                                        <MenuList id="split-button-menu">
+                                            {TradeOptions.map((option, index) => (
+                                                <MenuItem
+                                                    key={option}
+                                                    style={{
+                                                        border: index === tradeSelectedIndex ? '1px solid black' : 'none',
+                                                        color: 'white',
+                                                        backdropFilter: 'blur(10px)',
+                                                    }}
+                                                    selected={index === tradeSelectedIndex}
+                                                    onClick={(event) => handleTradeMenuItemClick(event, index)}
+                                                >
+                                                    {option}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuList>
+                                    </div>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'center', }}>
-                                    <MenuList id="split-button-menu">
-                                        {TradeOptions.map((option, index) => (
+                                <div style={{ display: 'flex', justifyContent: 'space-between', }}>
+                                    <HeaderText>Commision Method</HeaderText>
+                                    <MenuList style={{ display: 'flex', flexDirection: 'row', }}>
+                                        {commissionOptions.map((option, index) => (
                                             <MenuItem
                                                 key={option}
                                                 style={{
-                                                    border: index === tradeSelectedIndex ? '1px solid black' : 'none',
+                                                    border: index === commSelectedIndex ? '1px solid red' : 'none',
                                                     color: 'white',
                                                     backdropFilter: 'blur(10px)',
                                                 }}
-                                                selected={index === tradeSelectedIndex}
-                                                onClick={(event) => handleTradeMenuItemClick(event, index)}
+                                                selected={index === commSelectedIndex}
+                                                onClick={(event) => handleCommMenuItemClick(event, index)}
                                             >
                                                 {option}
                                             </MenuItem>
                                         ))}
                                     </MenuList>
                                 </div>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', }}>
-                                <HeaderText>Commision Method</HeaderText>
-                                <MenuList style={{ display: 'flex', flexDirection: 'row', }}>
-                                    {commissionOptions.map((option, index) => (
-                                        <MenuItem
-                                            key={option}
-                                            style={{
-                                                border: index === commSelectedIndex ? '1px solid red' : 'none',
-                                                color: 'white',
-                                                backdropFilter: 'blur(10px)',
-                                            }}
-                                            selected={index === commSelectedIndex}
-                                            onClick={(event) => handleCommMenuItemClick(event, index)}
-                                        >
-                                            {option}
-                                        </MenuItem>
-                                    ))}
-                                </MenuList>
-                            </div>
-                            <ConfirmButton onClick={async () => {
-                                await executeTrade(amount)
-                            }}>Confirm</ConfirmButton>
-                        </TradeBox>
-                    </TradeDiv></div>
-            </Grid>
-            <Snackbar open={open} autoHideDuration={1500} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                    Transaction recorded.
-                </Alert>
-            </Snackbar>
-        </Grid >
+                                <ConfirmButton onClick={async () => {
+                                    await executeTrade(amount)
+                                }}>Confirm</ConfirmButton>
+                            </TradeBox>
+                        </TradeDiv></div>
+                </Grid>
+                <Snackbar open={open} autoHideDuration={1500} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                        Transaction recorded.
+                    </Alert>
+                </Snackbar>
+            </Grid >
+        </>
     )
 }
 
