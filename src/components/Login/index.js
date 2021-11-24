@@ -6,6 +6,8 @@ import { getBTCPrice, loginUserAPI } from '../ServerApi';
 import styled from 'styled-components';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import bcrypt from 'bcryptjs';
+import sha1 from 'sha1';
+
 const styles = {
     root: {
         background: "black"
@@ -25,9 +27,9 @@ function Login(props) {
 
     const executeLogin = async () => {
         console.log('Logging in ...')
-        let pass_hash = await bcrypt.hash(Password, await bcrypt.genSalt(6));
-        await loginUserAPI(Username, pass_hash).then((res) => { console.log('response', res) })
-        console.log('psh', pass_hash)
+        // let pass_hash = await bcrypt.hash(Password, await bcrypt.genSalt(6));
+        await loginUserAPI(Username, Password).then((res) => { console.log('response', res) })
+        console.log('psh', Password, sha1(Password))
         await setSnack(true)
         setSnackMessage('Logged in.')
     }
