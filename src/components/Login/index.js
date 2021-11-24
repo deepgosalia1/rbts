@@ -18,6 +18,7 @@ const styles = {
 };
 
 function Login(props) {
+    const {setLoginType} = props;
     const [Username, setUsername] = useState('')
     const [Password, setPassword] = useState('');
     // const [Login, setLogin] = useState('');
@@ -28,7 +29,9 @@ function Login(props) {
     const executeLogin = async () => {
         console.log('Logging in ...')
         // let pass_hash = await bcrypt.hash(Password, await bcrypt.genSalt(6));
-        await loginUserAPI(Username, Password).then((res) => { console.log('response', res) })
+        await loginUserAPI(Username, Password).then((res) => {
+            console.log(res[0], typeof res) 
+            setLoginType(res[0].type.toLowerCase() === 'client'? 'C':res[0].type.toLowerCase() === 'manager' ? 'M':'T') })
         console.log('psh', Password, sha1(Password))
         await setSnack(true)
         setSnackMessage('Logged in.')
