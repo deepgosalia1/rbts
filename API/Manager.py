@@ -17,20 +17,15 @@ class Manager:
         conn = cg.connect_to_azure()
         qry = f"SELECT * FROM [dbo].[{self.type}]"
         df = pd.read_sql(qry,conn)
-        #user_type = cursor.fetchone()[0]
-        # cursor.execute(chk)
-        # user_type = cursor.fetchone()
         json_user_data = df.to_json(orient = "index")
         parsed_json = json.loads(json_user_data)
         return json.dumps(parsed_json)
     
-    def retrieve_transaction_range_data(self):
+    def retrieve_transaction_range_day(self):
         conn = cg.connect_to_azure()
-        qry = f"SELECT * FROM [dbo].[transactions] WHERE txdate="
-        df = pd.read_sql(qry,conn)
-        #user_type = cursor.fetchone()[0]
-        # cursor.execute(chk)
-        # user_type = cursor.fetchone()
+        #get daily aggregates
+        qry1 = f"SELECT txdate,MIN(txamount),MAX(txamount),AVG(txamount),COUNT(txamount),SUM(txamount) FROM [dbo].[transactions] WHERE txdate>='{self.start_date}' AND txdate<='{self.end_date}' GROUP BY txdate"
+        df = pd.read_sql(qry1,conn)
         json_user_data = df.to_json(orient = "index")
         parsed_json = json.loads(json_user_data)
         return json.dumps(parsed_json)
