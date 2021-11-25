@@ -36,20 +36,20 @@ def login():
 
 #     return
 
-# @app.route("/manager",method=['POST','GET'])
-# def manager():
-#     # mid = request.args.get('mid') or use request.form to get body
-#     data = request.get_json(force=True)
-#     type = data['type']
-#     id = data['id']
-#     start_date = data['start_date']
-#     end_date = data['end_date']
-#     #for client and trader info retrieval
-#     oManager1 = Manager.Manager(type)
-#     userList = oManager1.retrieve_data()
-#     #for aggregate functions
-#     oManager2 = Manager.Manager(id,start_date,end_date)
-#     aggregateData = oManager2.retrieve_transaction_range_day()
+@app.route("/manager",methods=['POST','GET'])
+def manager():
+    # mid = request.args.get('mid') or use request.form to get body
+    data = request.get_json(force=True)
+    type = data['type']
+    id = data['id']
+    start_date = data['start_date']
+    end_date = data['end_date']
+    #for client and trader info retrieval
+    oManager = Manager.Manager(type,id,start_date,end_date)
+    userList = oManager.retrieve_data()
+    #for aggregate function
+    aggregateData = oManager.retrieve_transaction_range_day()
+    return aggregateData
     
 
 #     return
