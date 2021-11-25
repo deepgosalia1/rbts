@@ -6,6 +6,7 @@ import Signup from './components/Signup';
 import Login from './components/Login';
 import { useEffect, useState } from 'react';
 import TradingPage from './components/TradingPage';
+import ClientView from './components/ClientView';
 
 function App() {
   const [type, setType] = useState('T')
@@ -34,8 +35,8 @@ function App() {
               <>
                 <TraderView logout={logout}/>
               </>
-              :
-              <><TradingPage logout={logout}/></>
+              :  type === 'C' &&
+              <><ClientView logout={logout} clientData = {undefined}/></>
         }
         {/* <Signup/> */}
       </Grid>

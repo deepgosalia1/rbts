@@ -18,7 +18,7 @@ const styles = {
 };
 
 function Login(props) {
-    const {setLoginType} = props;
+    const { setLoginType } = props;
     const [Username, setUsername] = useState('')
     const [Password, setPassword] = useState('');
     // const [Login, setLogin] = useState('');
@@ -27,14 +27,10 @@ function Login(props) {
     const [open, setSnack] = useState(false)
 
     const executeLogin = async () => {
-        console.log('Logging in ...')
-        // let pass_hash = await bcrypt.hash(Password, await bcrypt.genSalt(6));
         await loginUserAPI(Username, Password).then((res) => {
-            console.log(res[0], typeof res) 
-            setLoginType(res[0].type.toLowerCase() === 'client'? 'C':res[0].type.toLowerCase() === 'manager' ? 'M':'T') })
-        console.log('psh', Password, sha1(Password))
-        await setSnack(true)
-        setSnackMessage('Logged in.')
+            console.log(res[0])
+            setLoginType(res[0].type.toLowerCase() === 'client' ? 'C' : res[0].type.toLowerCase() === 'manager' ? 'M' : 'T')
+        })
     }
     function checkCorrectNumber(value) {
         var regexp = /^\d+(\.\d+)?$/;
@@ -162,7 +158,8 @@ text-shadow:
 -1px -1px 0 #000,  
 1px -1px 0 #000,
 -1px 1px 0 #000,
-1px 1px 0 #000;`;
+1px 1px 0 #000;
+`;
 
 
 const Addtext = styled(Text)`
@@ -176,7 +173,8 @@ text-shadow:
 -1px -1px 0 #000,  
 1px -1px 0 #000,
 -1px 1px 0 #000,
-1px 1px 0 #000;`;
+1px 1px 0 #000;
+`;
 
 const LoginDiv = styled.div`
 background: linear-gradient(180deg,#48423e,#373030);

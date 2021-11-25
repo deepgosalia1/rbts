@@ -99,7 +99,7 @@ function TradingView(props) {
             <Grid
                 container
                 display={'flex'}
-                flexDirection={'row'}
+                flexDirection={'column'}
                 justifyContent={'center'}
                 style={{
                     // flex:1,
@@ -207,7 +207,7 @@ function TradingView(props) {
                                 </div>
                                 <ConfirmButton onClick={async () => {
                                     await executeTrade(amount)
-                                }}>Confirm</ConfirmButton>
+                                }}>{traderView ? 'Confirm' : 'Place Order'}</ConfirmButton>
                             </TradeBox>
                         </TradeDiv></div>
                 </Grid>

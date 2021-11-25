@@ -30,6 +30,16 @@ const rows = [
     { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
 ];
 
+const clientTransactionRows = [
+    { txid: 1, tid: 123, txtype: 'Buy', Date: Date.now(), status:'pending' },
+    { txid: 2, tid: 123, txtype: 'Sell', Date: Date.now(), status:'approved' },
+    { txid: 3, tid: 123, txtype: 'Wallet', Date: Date.now(), status:'reject' },
+    { txid: 4, tid: 123, txtype: 'USD Wallet', Date: Date.now(), status:'pending' },
+    { txid: 5, tid: 123, txtype: 'Sell', Date: Date.now(), status:'approved' },
+    { txid: 6, tid: 123, txtype: 'Buy', Date: Date.now(), status:'approved' },
+    { txid: 7, tid: 123, txtype: 'Buy', Date: Date.now(), status:'approved' },
+];
+
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
     {
@@ -63,8 +73,9 @@ const columns = [
     },
 ];
 
+
 const SearchPage = (props) => {
-    const { Header = '', showSearch = true, showHeader = false } = props
+    const { Header = '', showSearch = true, showHeader = false, clientMode = false } = props
     const [searchValue, setSearchvalue] = useState('')
     const [resultList, setResult] = useState(rows)
 
@@ -72,6 +83,44 @@ const SearchPage = (props) => {
         console.log('Search API is called here.')
     }
 
+    
+const clientTransactionCols = [
+    { field: 'txid', headerName: 'Transact. ID', width: 200 },
+    {
+        field: 'tid',
+        headerName: 'TID',
+        width: 200,
+        editable: false,
+    },
+    {
+        field: 'txtype',
+        headerName: 'Type',
+        width: 200,
+        editable: false,
+    },
+    {
+        field: 'Date',
+        headerName: 'time',
+        // type: 'number',
+        width: 250,
+        editable: false,
+    },
+    {
+        field: 'Status',
+        headerName: 'txstatus',
+        // description: 'This column has a value getter and is not sortable.',
+        sortable: false,
+        width: 200,
+        renderCell: (params) => {
+            let cellValue = params.row.status
+            // console.log(cellValue, params)
+            return (
+                `${cellValue === 'approved' ? 'Approved' : cellValue === 'rejected' ? 'Rejected' : 'Pending'}`
+            )
+        }
+        ,
+    },
+]
     return (
         <>
             <DivHeader>
@@ -95,10 +144,11 @@ const SearchPage = (props) => {
                 />}
                 <TableDiv>
                     <DataGrid
-                        rows={rows}
-                        columns={columns}
+                        rows={! clientMode ? rows: clientTransactionRows}
+                        columns={clientMode ? clientTransactionCols : columns}
                         pageSize={5}
                         autoHeight
+                        getRowId={(r) => r.txid || r.id}
                         disableSelectionOnClick
                         isCellEditable={false}
                         style={{ color: 'white' }}
