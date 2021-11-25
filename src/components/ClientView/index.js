@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, Input, MenuItem, MenuList, TextField } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import { Box, Text } from 'grommet';
-import { getBTCPrice } from '../ServerApi';
+import { getBTCPrice, getClientTransactions } from '../ServerApi';
 import styled from 'styled-components';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -20,11 +20,20 @@ const styles = {
 };
 
 const ClientView = (props) => {
+    const { clientData } = props
+    const [transactions, setClientTransactions] = useState([])
+    async function getTransactions() {
+        // if (clientData) return await getClientTransactions(clientData.userid).then(setClientTransactions)
+    }
+    useEffect(() => {
+        getTransactions()
+    }, [clientData.userid])
+
     return (
         <Grid container flex flexDirection={'column'}>
             <Grid container flex flexDirection={'row'}>
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <TradingPage logout={props.logout} traderView = {false} />
+                    <TradingPage logout={props.logout} traderView={false} userData={clientData} />
                 </Grid>
                 {/* <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
                     <SearchPage />
@@ -32,7 +41,7 @@ const ClientView = (props) => {
             </Grid>
             <Grid container flex flexDirection={'row'}>
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <SearchPage showSearch={false} Header={'Your Transactions'} showHeader clientMode/>
+                    <SearchPage showSearch={false} Header={'Your Transactions'} showHeader clientMode transactions={transactions} />
                 </Grid>
             </Grid>
         </Grid>

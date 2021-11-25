@@ -18,7 +18,7 @@ const styles = {
 };
 
 function Login(props) {
-    const { setLoginType } = props;
+    const { setLoginType, getData } = props;
     const [Username, setUsername] = useState('')
     const [Password, setPassword] = useState('');
     // const [Login, setLogin] = useState('');
@@ -27,9 +27,16 @@ function Login(props) {
     const [open, setSnack] = useState(false)
 
     const executeLogin = async () => {
-        await loginUserAPI(Username, Password).then((res) => {
+        await loginUserAPI(Username, Password).then(async (res) => {
             console.log(res[0])
             setLoginType(res[0].type.toLowerCase() === 'client' ? 'C' : res[0].type.toLowerCase() === 'manager' ? 'M' : 'T')
+            if (res[0].type.toLowerCase() === 'client') {
+                getData(res[0])
+            } else if (res[0].type.toLowerCase() === 'manager') {
+                getData(res[0])
+            } else {
+                getData(res[0])
+            }
         })
     }
     function checkCorrectNumber(value) {
