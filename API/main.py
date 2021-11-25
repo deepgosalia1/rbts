@@ -19,7 +19,11 @@ def login():
     pass_hash = data['pass_hash']
     oLogin = Login.Login(username,pass_hash)
     #Return validation creds from API
-    return oLogin.check_type()
+    chk_type = oLogin.check_type()
+    getc_details = oLogin.get_client_data()
+    # gett_details = oLogin.get_trader_data()
+    return getc_details
+
 
 # @app.route("/trade")
 # def transaction():
@@ -32,13 +36,21 @@ def login():
 
 #     return
 
-# @app.route("/manager",method=['POST','GET'])
-# def manager():
-#     # mid = request.args.get('mid') or use request.form to get body
-#     data = request.get_json(force=True)
-#     type = data['type']
-#     #oManager = Manager.Manager(type)
-
+@app.route("/manager",method=['POST','GET'])
+def manager():
+    # mid = request.args.get('mid') or use request.form to get body
+    data = request.get_json(force=True)
+    type = data['type']
+    id = data['id']
+    start_date = data['start_date']
+    end_date = data['end_date']
+    #for client and trader info retrieval
+    oManager1 = Manager.Manager(type)
+    userList = oManager1.retrieve_data()
+    #for aggregate functions
+    oManager2 = Manager.Manager(id,start_date,end_date)
+    aggregateData = oManager2.retrieve_transaction_range_day()
+    
 
 #     return
 
