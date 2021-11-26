@@ -1,12 +1,12 @@
-BitcoinTradingSystem
-CS 6360 Term Project
+# BitcoinTradingSystem
+# CS 6360 Term Project
 
 Hita Gangineni
 Deep Dimple Gosalia
 Bhavesh Prasad Pudi
 Shashank Kathavate
 
-Tools:
+## Tools:
 Python 2
 Flask
 Microsoft Azure SQL
