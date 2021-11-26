@@ -9,6 +9,7 @@ import MuiAlert from '@mui/material/Alert';
 import TradingPage from '../TradingPage';
 import { SearchAdvanced } from 'grommet-icons';
 import { DataGrid } from '@mui/x-data-grid';
+import ObjectsToArray from '../utils/objToArray';
 
 const styles = {
     root: {
@@ -31,13 +32,13 @@ const rows = [
 ];
 
 const clientTransactionRows = [
-    { txid: 1, tid: 123, txtype: 'Buy', Date: Date.now(), status:'pending' },
-    { txid: 2, tid: 123, txtype: 'Sell', Date: Date.now(), status:'approved' },
-    { txid: 3, tid: 123, txtype: 'Wallet', Date: Date.now(), status:'reject' },
-    { txid: 4, tid: 123, txtype: 'USD Wallet', Date: Date.now(), status:'pending' },
-    { txid: 5, tid: 123, txtype: 'Sell', Date: Date.now(), status:'approved' },
-    { txid: 6, tid: 123, txtype: 'Buy', Date: Date.now(), status:'approved' },
-    { txid: 7, tid: 123, txtype: 'Buy', Date: Date.now(), status:'approved' },
+    { txid: 1, tid: 123, txtype: 'Buy', Date: Date.now(), status: 'pending' },
+    { txid: 2, tid: 123, txtype: 'Sell', Date: Date.now(), status: 'approved' },
+    { txid: 3, tid: 123, txtype: 'Wallet', Date: Date.now(), status: 'reject' },
+    { txid: 4, tid: 123, txtype: 'USD Wallet', Date: Date.now(), status: 'pending' },
+    { txid: 5, tid: 123, txtype: 'Sell', Date: Date.now(), status: 'approved' },
+    { txid: 6, tid: 123, txtype: 'Buy', Date: Date.now(), status: 'approved' },
+    { txid: 7, tid: 123, txtype: 'Buy', Date: Date.now(), status: 'approved' },
 ];
 
 const columns = [
@@ -46,20 +47,17 @@ const columns = [
         field: 'firstName',
         headerName: 'First name',
         width: 150,
-        editable: true,
     },
     {
         field: 'lastName',
         headerName: 'Last name',
         width: 150,
-        editable: true,
     },
     {
         field: 'age',
         headerName: 'Age',
         type: 'number',
         width: 110,
-        editable: true,
     },
     {
         field: 'fullName',
@@ -75,52 +73,71 @@ const columns = [
 
 
 const SearchPage = (props) => {
-    const { Header = '', showSearch = true, showHeader = false, clientMode = false } = props
+    const { Header = '', showSearch = true, showHeader = false, clientMode = false, transactions } = props
+    // console.log(transactions.tovalues())
+    let transacts = ObjectsToArray(transactions)
+    console.log(transacts, transactions)
     const [searchValue, setSearchvalue] = useState('')
-    const [resultList, setResult] = useState(rows)
+    const [resultList, setResult] = useState(transacts.length > 0 && transacts || rows)
 
     const callSearchAPI = async () => {
         console.log('Search API is called here.')
     }
 
-    
-const clientTransactionCols = [
-    { field: 'txid', headerName: 'Transact. ID', width: 200 },
-    {
-        field: 'tid',
-        headerName: 'TID',
-        width: 200,
-        editable: false,
-    },
-    {
-        field: 'txtype',
-        headerName: 'Type',
-        width: 200,
-        editable: false,
-    },
-    {
-        field: 'Date',
-        headerName: 'time',
-        // type: 'number',
-        width: 250,
-        editable: false,
-    },
-    {
-        field: 'Status',
-        headerName: 'txstatus',
-        // description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        width: 200,
-        renderCell: (params) => {
-            let cellValue = params.row.status
-            // console.log(cellValue, params)
-            return (
-                `${cellValue === 'approved' ? 'Approved' : cellValue === 'rejected' ? 'Rejected' : 'Pending'}`
-            )
-        }
-        ,
-    },
-]
+
+    const clientTransactionCols = [
+        { field: 'txid', headerName: 'Transact. ID', width: 200 },
+        {
+            field: 'tid',
+            headerName: 'TID',
+            width: 200,
+            renderCell: (params) => {
+                let cellValue = params.row.tid
+                return (
+                    `${cellValue === null ? '-' : cellValue}`
+                )
+            }
+            ,
+        },
+        {
+            field: 'txtype',
+            headerName: 'Type',
+            width: 200,
+            renderCell: (params) => {
+                let cellValue = params.row.txtype
+                return (
+                    `${cellValue === 0 ? 'Buy' : cellValue === 1 ? 'Sell' : 'Wallet'}`
+                )
+            }
+            ,
+        },
+        {
+            field: 'txdate',
+            headerName: 'Date',
+            // type: 'number',
+            width: 250,
+            renderCell: (params) => {
+                let cellValue = params.row.txdate
+                return (
+                    `${new Date(cellValue).getMonth()}-${new Date(cellValue).getDate()}-${new Date(cellValue).getFullYear()}`
+                )
+            }
+            ,
+        },
+        {
+            field: 'Status',
+            headerName: 'Status',
+            width: 200,
+            renderCell: (params) => {
+                let cellValue = params.row.txstatus
+                // console.log(cellValue, params)
+                return (
+                    `${cellValue === 'approved' ? 'Approved' : cellValue === 'rejected' ? 'Rejected' : 'Pending'}`
+                )
+            }
+            ,
+        },
+    ]
     return (
         <>
             <DivHeader>
@@ -144,13 +161,12 @@ const clientTransactionCols = [
                 />}
                 <TableDiv>
                     <DataGrid
-                        rows={! clientMode ? rows: clientTransactionRows}
+                        rows={! clientMode ? rows: transacts.reverse()}
                         columns={clientMode ? clientTransactionCols : columns}
                         pageSize={5}
                         autoHeight
                         getRowId={(r) => r.txid || r.id}
                         disableSelectionOnClick
-                        isCellEditable={false}
                         style={{ color: 'white' }}
                         rowsPerPageOptions={[5]}
                     />

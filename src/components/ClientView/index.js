@@ -23,10 +23,12 @@ const ClientView = (props) => {
     const { clientData } = props
     const [transactions, setClientTransactions] = useState([])
     async function getTransactions() {
-        // if (clientData) return await getClientTransactions(clientData.userid).then(setClientTransactions)
+        await getClientTransactions(clientData.userid).then((val) => {
+            setClientTransactions(val)
+        })
     }
     useEffect(() => {
-        getTransactions()
+        if (clientData.userid !== undefined) getTransactions()
     }, [clientData.userid])
 
     return (

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, Input, MenuItem, MenuList, TextField } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import { Box, Text } from 'grommet';
-import { getBTCPrice } from '../ServerApi';
+import { getBTCPrice, placeTrade } from '../ServerApi';
 import styled from 'styled-components';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -14,6 +14,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import formatDate from '../utils/getFormattedDate';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -27,13 +28,12 @@ const styles = {
     }
 };
 const TradeOptions = ['Buy', 'Sell'];
-const commissionOptions = ['BTC', 'Fiat']
+const commissionOptions = ['BTC', 'FIAT']
 
 function TradingView(props) {
     const { traderView = false, userData } = props
     const [btc, setBTC] = useState(64646)
-    const [balance, setBalance] = useState(123)
-    const [amount, setAmount] = useState('')
+    const [amount, setAmount] = useState(0)
     const [snackMessage, setSnackMessage] = useState('')
     const [incorrectInput, SetIncorrect] = useState(false)
     async function currPrice() {
@@ -44,12 +44,36 @@ function TradingView(props) {
     const [open, setSnack] = useState(false)
     const [show, setShow] = useState(false);
     const [type, setType] = useState('B')
-    const handleModalClose = () => setShow(false);
+    const [topUpValue, setTopUpValue] = useState(0)
+    const handleModalClose = () => {
+        setShow(false);
+    }
     const handleShow = () => setShow(true);
+
     const executeTrade = async (amount) => {
-        console.log('Trading for ...', amount)
-        await setSnack(true)
-        setSnackMessage('Transaction Confirmed.')
+        // comment this if-loop for testing purposes
+        if (userData.fiatwallet < amount) {
+            alert('Insufficient Funds in wallet!')
+            return
+        }
+        if (!amount || amount <= 0) {
+            alert('Invalid Input')
+            return
+        }
+        console.log('clientdata', userData)
+        await placeTrade(
+            userData.userid,
+            Number(amount),
+            commSelectedIndex,
+            tradeSelectedIndex,
+            formatDate(new Date())
+        ).then(() => {
+            setSnack(true)
+            setSnackMessage('Transaction Confirmed.')
+        }).catch((e) => {
+            setSnack(true)
+            setSnackMessage('Transaction couldnt be placed.')
+        })
     }
     const handleTradeMenuItemClick = (event, index) => {
         setTradeSelectedIndex(index);
@@ -72,14 +96,18 @@ function TradingView(props) {
 
         setSnack(false);
     };
+
+    const placeTopUp
+
     useEffect(() => {
         currPrice() // fetching btc price
 
     }, [])
+
     return (
         <>
             <Dialog open={show} onClose={handleModalClose} fullWidth color={'black'}>
-                <DialogTitle>Subscribe</DialogTitle>
+                <DialogTitle>Top up Wallet</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
@@ -89,6 +117,10 @@ function TradingView(props) {
                         type="decimal"
                         fullWidth
                         variant="filled"
+                        value={topUpValue}
+                        onChange={(val) => {
+                            setTopUpValue(val.target.value)
+                        }}
                         placeholder={`Enter the amount of ${type == 'B' ? 'BTC' : 'USD'} you want to ${type == 'B' ? 'purchase' : 'deposit'} at current price`}
                     />
                 </DialogContent>
@@ -270,6 +302,7 @@ line-height: 20px;
 color: rgba(255, 255, 255, 0.64);
 margin: 10px 0;
 display: flex;
+cursor: pointer;
 `;
 
 const TradeBox = styled.div`
