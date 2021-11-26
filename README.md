@@ -1,3 +1,35 @@
+BitcoinTradingSystem
+CS 6360 Term Project
+
+Hita Gangineni
+Deep Dimple Gosalia
+Bhavesh Prasad Pudi
+Shashank Kathavate
+
+Tools:
+Python 2
+Flask
+Microsoft Azure SQL
+React JS
+Python2 Packages:
+flask
+flask-sqlalchemy
+mysql-python
+flask-login
+flask-migrate
+flask-wtf
+flask-bootstrap
+werkzeug.security
+waitress (WSGI server)
+configparser
+WTForms
+apscheduler (runs Gold/Silver update once a month)
+Install:
+The application first requires that Python2, pip and MySQL are installed. With a running instance of MySQL, the following scripts should be run via the command-line in the root folder of the application.
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
