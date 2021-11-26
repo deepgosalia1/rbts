@@ -25,11 +25,11 @@ function App() {
           border: '2px solid white',
         }}
       >
-        <Grid item md={12} lg={12} style={{ display: 'flex', alignItems: 'center', justifyContent:'center'}}>
+        {type !== '' && <Grid item md={12} lg={12} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <LogoutButton text="Logout" onClick={() => {
             logout()
           }} />
-        </Grid>
+        </Grid>}
         {/* <TradingView /> */}
         {type === '' ? <Login
           setLoginType={async (val) => {

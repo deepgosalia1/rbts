@@ -4,7 +4,7 @@ import Login
 import json
 import CreateUser
 import Manager
-
+import Transaction
 #initialize flask API
 app = Flask(__name__)
 api = CORS(app)
@@ -84,7 +84,18 @@ def managerMonthly():
     aggregateData = oManager.retrieve_transaction_range_month()
     return aggregateData
     
-
+@app.route("/client/placeBuy",methods=['POST','GET'])
+def client_place_buyOrder():
+    data = request.get_json(force=True)
+    txamount = data['txAmount']
+    txtype = data['txType']
+    txstatus = 0 # pending, when the first time order is placed
+    cid = data['cid']
+    commtype = data['commType']
+    txdate = data['txDate']
+    txn = Transaction.Transaction(cid, txdate, txtype, txstatus, txamount, commtype)
+    # aggregateData = oManager.retrieve_transaction_range_month()
+    print(txn)
 
 ########ADD USER APIS#######
 
