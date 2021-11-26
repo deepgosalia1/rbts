@@ -40,8 +40,8 @@ def login():
 
 #######MANAGER APIS#########
 
-@app.route("/manager",methods=['POST','GET'])
-def manager():
+@app.route("/manager/",methods=['POST','GET'])
+def managerData():
     data = request.get_json(force=True)
     type = data['type']
     id = data['id']
@@ -52,7 +52,7 @@ def manager():
     return TransData
 
 @app.route("/manager/daily",methods=['POST','GET'])
-def manager():
+def managerDaily():
     data = request.get_json(force=True)
     type = data['type']
     id = data['id']
@@ -63,7 +63,7 @@ def manager():
     return aggregateData
 
 @app.route("/manager/weekly",methods=['POST','GET'])
-def manager():
+def managerWeekly():
     data = request.get_json(force=True)
     type = data['type']
     id = data['id']
@@ -74,7 +74,7 @@ def manager():
     return aggregateData
 
 @app.route("/manager/monthly",methods=['POST','GET'])
-def manager():
+def managerMonthly():
     data = request.get_json(force=True)
     type = data['type']
     id = data['id']
