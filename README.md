@@ -1,4 +1,4 @@
-# BitcoinTradingSystem
+# Bitcoin Trading Application
 # CS 6360 Term Project
 
 Hita Gangineni
