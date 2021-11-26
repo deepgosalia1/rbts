@@ -1,5 +1,4 @@
 from flask import Flask,request,jsonify
-#from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from flask_cors import CORS
 import Login
 import json
@@ -10,20 +9,22 @@ import Manager
 app = Flask(__name__)
 api = CORS(app)
 
+
+######LOGIN APIs#######
+
 @app.route("/login",methods=['POST', 'GET'])
 def login():
-    # print('req',json.load(request.args))
     data = request.get_json(force=True)
-    # or use request.form to get body
     username = data['username']
     pass_hash = data['pass_hash']
     oLogin = Login.Login(username,pass_hash)
-    #Return validation creds from API
     chk_type = oLogin.check_type()
     getc_details = oLogin.get_client_data()
-    # gett_details = oLogin.get_trader_data()
     return getc_details
 
+
+
+######TRADER APIS######
 
 # @app.route("/trade")
 # def transaction():
@@ -36,23 +37,56 @@ def login():
 
 #     return
 
+
+#######MANAGER APIS#########
+
 @app.route("/manager",methods=['POST','GET'])
 def manager():
-    # mid = request.args.get('mid') or use request.form to get body
     data = request.get_json(force=True)
     type = data['type']
     id = data['id']
     start_date = data['start_date']
     end_date = data['end_date']
-    #for client and trader info retrieval
     oManager = Manager.Manager(type,id,start_date,end_date)
-    userList = oManager.retrieve_data()
-    #for aggregate function
+    TransData = oManager.retrieve_data()
+    return TransData
+
+@app.route("/manager/daily",methods=['POST','GET'])
+def manager():
+    data = request.get_json(force=True)
+    type = data['type']
+    id = data['id']
+    start_date = data['start_date']
+    end_date = data['end_date']
+    oManager = Manager.Manager(type,id,start_date,end_date)
     aggregateData = oManager.retrieve_transaction_range_day()
+    return aggregateData
+
+@app.route("/manager/weekly",methods=['POST','GET'])
+def manager():
+    data = request.get_json(force=True)
+    type = data['type']
+    id = data['id']
+    start_date = data['start_date']
+    end_date = data['end_date']
+    oManager = Manager.Manager(type,id,start_date,end_date)
+    aggregateData = oManager.retrieve_transaction_range_week()
+    return aggregateData
+
+@app.route("/manager/monthly",methods=['POST','GET'])
+def manager():
+    data = request.get_json(force=True)
+    type = data['type']
+    id = data['id']
+    start_date = data['start_date']
+    end_date = data['end_date']
+    oManager = Manager.Manager(type,id,start_date,end_date)
+    aggregateData = oManager.retrieve_transaction_range_month()
     return aggregateData
     
 
-#     return
+
+########ADD USER APIS#######
 
 # @app.route("/newuser/cient",method=['GET'])
 # def createClientUser():
