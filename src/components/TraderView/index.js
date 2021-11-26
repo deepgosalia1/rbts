@@ -20,6 +20,7 @@ const styles = {
 };
 
 const TraderView = (props) => {
+    const { traderData } = props
     return (
         <Grid container flex flexDirection={'column'}>
             <Grid container flex flexDirection={'row'}>
@@ -32,10 +33,10 @@ const TraderView = (props) => {
             </Grid>
             <Grid container flex flexDirection={'row'}>
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <SearchPage showSearch={false} Header={'Recent Transactions'} showHeader/>
+                    <SearchPage showSearch={false} Header={'Recent Transactions'} showHeader />
                 </Grid>
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <ApprovalList />
+                    <ApprovalList traderData={traderData} />
                 </Grid>
             </Grid>
         </Grid>

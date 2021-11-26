@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, Input, MenuItem, MenuList, TextField } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import { Box, Text } from 'grommet';
-import { getBTCPrice, placeTrade } from '../ServerApi';
+import { getBTCPrice, placeTrade, placeTopUpRequest } from '../ServerApi';
 import styled from 'styled-components';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -97,8 +97,6 @@ function TradingView(props) {
         setSnack(false);
     };
 
-    const placeTopUp
-
     useEffect(() => {
         currPrice() // fetching btc price
 
@@ -126,7 +124,13 @@ function TradingView(props) {
                 </DialogContent>
                 <DialogActions style={{ backgroundColor: 'lightGrey', display: 'flex', justifyContent: 'space-between' }}>
                     <Text onClick={handleModalClose} color={'black'} style={{ cursor: 'pointer', padding: 10, display: 'flex', color: 'black', zIndex: 5 }}>Cancel</Text>
-                    <Text onClick={handleModalClose} color={'black'} style={{ cursor: 'pointer', padding: 10, display: 'flex', color: 'black', zIndex: 5 }}>Confirm</Text>
+                    <Text onClick={() => {
+                        handleModalClose()
+                        placeTopUpRequest(userData.userid, topUpValue, formatDate(new Date())).then(() => { 
+                            setSnack(true)
+                            setSnackMessage('Placed Topup request.')
+                        })
+                    }} color={'black'} style={{ cursor: 'pointer', padding: 10, display: 'flex', color: 'black', zIndex: 5 }}>Confirm</Text>
                 </DialogActions>
             </Dialog>
             <Grid
