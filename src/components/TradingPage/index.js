@@ -30,7 +30,7 @@ const TradeOptions = ['Buy', 'Sell'];
 const commissionOptions = ['BTC', 'Fiat']
 
 function TradingView(props) {
-    const { traderView = false, customerName = 'ABC' } = props
+    const { traderView = false, userData } = props
     const [btc, setBTC] = useState(64646)
     const [balance, setBalance] = useState(123)
     const [amount, setAmount] = useState('')
@@ -73,7 +73,8 @@ function TradingView(props) {
         setSnack(false);
     };
     useEffect(() => {
-        // currPrice() // fetching btc price
+        currPrice() // fetching btc price
+
     }, [])
     return (
         <>
@@ -91,9 +92,9 @@ function TradingView(props) {
                         placeholder={`Enter the amount of ${type == 'B' ? 'BTC' : 'USD'} you want to ${type == 'B' ? 'purchase' : 'deposit'} at current price`}
                     />
                 </DialogContent>
-                <DialogActions style={{backgroundColor:'lightGrey', display:'flex', justifyContent:'space-between'}}>
-                    <Text onClick={handleModalClose} color={'black'} style={{cursor:'pointer', padding: 10, display:'flex', color:'black', zIndex:5}}>Cancel</Text>
-                    <Text onClick={handleModalClose} color={'black'} style={{cursor:'pointer', padding: 10, display:'flex', color:'black', zIndex:5}}>Confirm</Text>
+                <DialogActions style={{ backgroundColor: 'lightGrey', display: 'flex', justifyContent: 'space-between' }}>
+                    <Text onClick={handleModalClose} color={'black'} style={{ cursor: 'pointer', padding: 10, display: 'flex', color: 'black', zIndex: 5 }}>Cancel</Text>
+                    <Text onClick={handleModalClose} color={'black'} style={{ cursor: 'pointer', padding: 10, display: 'flex', color: 'black', zIndex: 5 }}>Confirm</Text>
                 </DialogActions>
             </Dialog>
             <Grid
@@ -107,11 +108,7 @@ function TradingView(props) {
                     width: '100%',
                     padding: 10,
                 }}>
-                <Grid item sm={12} md={12} lg={12}
-                    style={{
-                        // backgroundColor:'green'
-                    }}
-                >
+                <Grid item sm={12} md={12} lg={12}>
                     <LogoutButton text="Logout" onClick={() => {
                         props?.logout()
                     }} />
@@ -125,17 +122,11 @@ function TradingView(props) {
                     </BTCPriceDiv>
                     <div style={{ height: 'fit-content', display: 'flex', justifyContent: 'center', marginTop: 50 }}>
                         <TradeDiv>
-                            <DivHeader>
+                            {!traderView && <DivHeader>
                                 <HeaderText
-                                    style={{ textDecorationLine: !traderView ? 'underline' : 'none' }}
-                                    onClick={() => {
-                                        if (traderView) return
-                                        setType('B')
-                                        handleShow()
-                                    }}
-                                >BTC Balance : {balance}
+                                >BTC Balance : {userData.btcwallet}
                                 </HeaderText>
-                                {/* {traderView ? <HeaderText>C_Name : {customerName}</HeaderText> : <></>} */}
+                                {!traderView ? <HeaderText>Welcome : {userData.fname}</HeaderText> : <></>}
                                 <HeaderText
                                     style={{
                                         textDecorationLine: !traderView ? 'underline' : 'none'
@@ -145,9 +136,9 @@ function TradingView(props) {
                                         setType('W')
                                         handleShow()
                                     }}
-                                >Wal Balance : {balance}
+                                >Wallet Balance : {userData.fiatwallet}
                                 </HeaderText>
-                            </DivHeader>
+                            </DivHeader>}
                             <TradeBox>
                                 <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
                                     <HeaderText>Enter Amount</HeaderText>
@@ -211,9 +202,9 @@ function TradingView(props) {
                             </TradeBox>
                         </TradeDiv></div>
                 </Grid>
-                <Snackbar open={open} autoHideDuration={1500} onClose={handleClose}>
+                <Snackbar open={open} autoHideDuration={2000} onClose={handleClose}>
                     <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                        Transaction recorded.
+                        Transaction order placed, pending approval
                     </Alert>
                 </Snackbar>
             </Grid >

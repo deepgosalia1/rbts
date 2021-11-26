@@ -20,7 +20,8 @@ const styles = {
     }
 };
 
-const TraderView = () => {
+const ManagerView = (props) => {
+    const {managerData} = props 
     return (
         <>
             <Grid container flex flexDirection={'row'}>
@@ -29,14 +30,14 @@ const TraderView = () => {
                     <ManagerClientSearchPage />
                 </Grid>
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <ManagerTraderSearchPage/>
+                    <ManagerTraderSearchPage />
                 </Grid>
             </Grid>
             <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <TradingView/>
-                </Grid>
+                <TradingView />
+            </Grid>
         </>
     )
 }
 
-export default withStyles(styles)(TraderView)
+export default withStyles(styles)(ManagerView)

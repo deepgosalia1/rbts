@@ -5,14 +5,17 @@ import TraderView from './components/TraderView';
 import Signup from './components/Signup';
 import Login from './components/Login';
 import { useEffect, useState } from 'react';
-import TradingPage from './components/TradingPage';
+import ManagerView from './components/Manager';
 import ClientView from './components/ClientView';
+import { Button } from '@tsamantanis/react-glassmorphism'
 
 function App() {
-  const [type, setType] = useState('T')
+  const [type, setType] = useState('')
   const logout = () => setType('')
+  const [userObj, setUserObj] = useState([])
   useEffect(() => {
-  }, [])
+    console.log('logged in user is:', userObj)
+  }, [userObj])
   return (
     <MainGrid container flex flexDirection={'row'} style={{ height: '100vh' }}>
       <Grid item md={12} lg={12}
@@ -22,21 +25,30 @@ function App() {
           border: '2px solid white',
         }}
       >
+        <Grid item md={12} lg={12} style={{ display: 'flex', alignItems: 'center', justifyContent:'center'}}>
+          <LogoutButton text="Logout" onClick={() => {
+            logout()
+          }} />
+        </Grid>
         {/* <TradingView /> */}
         {type === '' ? <Login
           setLoginType={async (val) => {
             setType(val)
-          }} /> :
-          type === 'M' ?
+          }}
+          getData={async (val) => {
+            await setUserObj(val)
+          }}
+        /> :
+          type === 'M' && userObj ?
             <>
-              {/* <ManagerView logout={logout}/> */}
+              <ManagerView logout={logout} managerData={userObj} />
             </>
-            : type === 'T' ?
+            : type === 'T' && userObj ?
               <>
-                <TraderView logout={logout}/>
+                <TraderView traderData={userObj} logout={logout} />
               </>
-              :  type === 'C' &&
-              <><ClientView logout={logout} clientData = {undefined}/></>
+              : type === 'C' && userObj &&
+              <><ClientView logout={logout} clientData={userObj} /></>
         }
         {/* <Signup/> */}
       </Grid>
@@ -50,3 +62,6 @@ const MainGrid = styled(Grid)`
 // background: radial-gradient(circle at 100%, #333, #333 50%, #eee 75%, #333 75%);
 // backdrop-filter: blur(72px);
 `
+const LogoutButton = styled(Button)`
+
+`;
