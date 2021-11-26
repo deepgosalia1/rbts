@@ -1,5 +1,6 @@
 import pandas as pd
 from flask import jsonify
+from pandas.core import indexing
 from pandas.core.dtypes.missing import notnull
 import config as cg
 from pandas.io import json
@@ -23,23 +24,45 @@ class Manager:
     def retrieve_transaction_range_day(self):
         conn = cg.connect_to_azure()
         #get daily aggregates
-        qry1 = f"SELECT txdate,MIN(txamount),MAX(txamount),AVG(txamount),COUNT(txamount),SUM(txamount) FROM [dbo].[transactions] WHERE txdate>='{self.start_date}' AND txdate<='{self.end_date}' GROUP BY txdate"
-        df1 = pd.read_sql(qry1,conn)
+        qry1 = f"SELECT txdate,MIN(txamount) as min,MAX(txamount) as max,AVG(txamount) as average,COUNT(txamount) as count,SUM(txamount) as sum FROM [dbo].[transactions] WHERE txdate>='{self.start_date}' AND txdate<='{self.end_date}' GROUP BY txdate"
+        df1 = pd.read_sql(qry1,conn,).astype({"txdate":str})
         print(df1)
-        qry2 = f"SELECT txdate,txamount FROM [dbo].[transactions] WHERE txdate>='{self.start_date}' AND txdate<='{self.end_date}'"
-        df2 = pd.read_sql(qry2,conn)
-        print(df2)
-        for index,row in df2.iterrows():
-            sum = 0
-            avg = 0
-            if not index%7==0:
-                if row['txamount']:
-                    sum = sum + row['txamount']
-                    print("sum",sum)
-                else:
-                    break
-            avg = sum/7
-            print(avg)
         json_user_data = df1.to_json(orient = "index")
         parsed_json = json.loads(json_user_data)
         return json.dumps(parsed_json)
+
+    def retrieve_transaction_range_week(self):
+        dfWeekly = pd.DataFrame(columns=['txdate','min','max','avg','count','sum'])
+        conn = cg.connect_to_azure()
+        qry2 = f"SELECT txdate,MIN(txamount) as min,MAX(txamount) as max,AVG(txamount) as average,COUNT(txamount) as count,SUM(txamount) as sum FROM [dbo].[transactions] WHERE txdate>='{self.start_date}' AND txdate<='{self.end_date}' GROUP BY txdate"
+        df2 = pd.read_sql(qry2,conn)
+        print(df2)
+        sum = 0
+        avg = 0
+        count = 1
+        cnttrans = 0
+        lismin = []
+        lismax = []
+        for i in range(len(df2['txdate'])):
+            sum+=df2['sum'][i]
+            cnttrans+=df2['count'][i]
+            lismin.append(df2['min'][i])
+            lismax.append(df2['max'][i])
+            if count%7==0:
+                avg = sum/cnttrans
+                date = f"{df2['txdate'][i-7]} - {df2['txdate'][i]}"
+                dfWeekly.append({'txdate':date,'min':min(lismin),'max':max(lismax),'avg':avg,'count':count,'sum':sum})
+                lismax = []
+                lismin = []
+                sum = 0
+                avg = 0
+                count+=1
+            elif not count%7==0:
+                count+=1
+        json_user_data = dfWeekly.to_json(orient = "index")
+        parsed_json = json.loads(json_user_data)
+        return json.dumps(parsed_json)
+
+
+                
+

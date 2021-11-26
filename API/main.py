@@ -48,7 +48,7 @@ def manager():
     oManager = Manager.Manager(type,id,start_date,end_date)
     userList = oManager.retrieve_data()
     #for aggregate function
-    aggregateData = oManager.retrieve_transaction_range_day()
+    aggregateData = oManager.retrieve_transaction_range_week()
     return aggregateData
     
 
