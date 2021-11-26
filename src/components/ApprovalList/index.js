@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, IconButton, Input, MenuItem, MenuList, TextField } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import { Box, Button, Text, TextInput } from 'grommet';
-import { ApproveTopupRequet, getBTCPrice } from '../ServerApi';
+import { ApproveTopupRequet, getBTCPrice, RejectTopup } from '../ServerApi';
 import styled from 'styled-components';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -94,7 +94,10 @@ const ApprovalList = (props) => {
                         </IconButton>
                         <IconButton aria-label="delete" onClick={() => {
                             // state Update with filter to remove the clicked row
-                            setData(prev => prev.filter(p => p.id != params.id))
+                            RejectTopup(params.txid, params.cid, params.txdate).then(() => {
+                                setData(prev => prev.filter(p => p.id != params.id))
+
+                            })
                             // add api to update too
                         }}>
                             <ClearIcon />
