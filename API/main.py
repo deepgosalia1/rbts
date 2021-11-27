@@ -7,6 +7,8 @@ import Manager
 import Transaction
 import Client
 import Cancellations
+import Trader
+
 # initialize flask API
 app = Flask(__name__)
 api = CORS(app)
@@ -27,16 +29,13 @@ def login():
 
 ######TRADER APIS######
 
-# @app.route("/trader")
-# def transaction():
-#     # txid = request.args.get('txid') or use request.form to get body
-#     # done_by = request.args.get('done_by')
-#     # comm_type = request.args.get('comm_type')
-#     # comm_paid = request.args.get('comm_paid') or use request.form to get body
-#     # amount = request.args.get('amount')
-#     # belongs_to= request.args.get('belongs_to')
-
-#     return
+@app.route("/trader/search",methods=['GET','POST'])
+def transactionSearch():
+    data = request.get_json(force=True)
+    key = data['key']
+    oTrader = Trader.Trader(key)
+    matchedData = oTrader.searchKey()
+    return matchedData
 
 
 #######MANAGER APIS#########

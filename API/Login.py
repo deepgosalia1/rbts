@@ -27,7 +27,6 @@ class Login:
         qry = f"SELECT * FROM client WHERE cid={self.id}"
         self.df2 = pd.read_sql(qry,conn)
         df3 = self.df1.join(self.df2)
-        print(df3)
         # user_type = cursor.fetchone()[0]
         # cursor.execute(chk)
         # user_type = cursor.fetchone()
