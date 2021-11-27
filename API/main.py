@@ -150,19 +150,33 @@ def RejectTopUp():
     return txn.rejecttopup()
 ########ADD USER APIS#######
 
-# @app.route("/newuser/cient",method=['GET'])
-# def createClientUser():
-#     data = request.get_json(force=True)
-#     first_name = data['first_name']
-#     last_name = data['last_name']
-#     age = data['age']
-#     ssn = data['ssn']
-#     email = data['email']
-#     username = data['username']
-#     password = data['password']
-#     ph_no = data['ph_no']
-
-#     #oCreateTraderUser = CreateUser.CreateUser(first_name,last_name,age,ssn,email,username,password,ph_no)
+@app.route("/newuser/<id>",methods=['GET'])
+def createUser(id):
+    data = request.get_json(force=True)
+    first_name = data['first_name']
+    last_name = data['last_name']
+    age = data['age']
+    ssn = data['ssn']
+    email = data['email']
+    username = data['username']
+    password = data['password']
+    ph_no = data['ph_no']
+    type=data['type']
+    clientstreet = data['clientstreet']
+    clientzip = data['clientzip']
+    clientstate = data['clientstate']
+    clientcountry = data['clientcountry']
+    oCreateUser = CreateUser.CreateUser(first_name,last_name,age,ssn,email,username,password,ph_no,type,clientstreet,clientzip,clientstate,clientcountry)
+    if id == "0":
+        oCreateUser.createClient()
+    elif id=="1":
+        oCreateUser.createTrader()
+    elif id=="2":
+        oCreateUser.createManager()
+    else:
+        return "incorrect id"
+    return "success"
+        
 
 
 # @app.route("/newuser/trader",method = ['GET'])

@@ -25,7 +25,7 @@ class Manager:
     def retrieve_transaction_range_day(self):
         conn = cg.connect_to_azure()
         # get daily aggregates
-        qry1 = f"SELECT txdate,MIN(txamount) as min,MAX(txamount) as max,AVG(txamount) as average,COUNT(txamount) as count,SUM(txamount) as sum FROM [dbo].[transactions] WHERE txdate>='{self.start_date}' AND txdate<='{self.end_date}' GROUP BY txdate"
+        qry1 = f"SELECT txdate,MIN(txamount) as min,MAX(txamount) as max,AVG(txamount) as average,COUNT(txamount) as count,SUM(txamount) as sum FROM [dbo].[transactions] WHERE txdate >= '{self.start_date}' AND txdate <= '{self.end_date}' GROUP BY txdate"
         df1 = pd.read_sql(qry1, conn,).astype({"txdate": str})
         print(df1)
         json_user_data = df1.to_json(orient="index")
@@ -36,7 +36,7 @@ class Manager:
         dfWeekly = pd.DataFrame(
             columns=['txdate', 'min', 'max', 'avg', 'count', 'sum'])
         conn = cg.connect_to_azure()
-        qry2 = f"SELECT txdate,MIN(txamount) as min,MAX(txamount) as max,AVG(txamount) as average,COUNT(txamount) as count,SUM(txamount) as sum FROM [dbo].[transactions] WHERE txdate>='{self.start_date}' AND txdate<='{self.end_date}' GROUP BY txdate"
+        qry2 = f"SELECT txdate,MIN(txamount) as min,MAX(txamount) as max,AVG(txamount) as average,COUNT(txamount) as count,SUM(txamount) as sum FROM [dbo].[transactions] WHERE txdate >= '{self.start_date}' AND txdate <= '{self.end_date}' GROUP BY txdate"
         df2 = pd.read_sql(qry2, conn)
         print(df2)
         sum = 0
@@ -70,9 +70,8 @@ class Manager:
         dfMonthly = pd.DataFrame(
             columns=['txdate', 'min', 'max', 'avg', 'count', 'sum'])
         conn = cg.connect_to_azure()
-        qry2 = f"SELECT txdate,MIN(txamount) as min,MAX(txamount) as max,AVG(txamount) as average,COUNT(txamount) as count,SUM(txamount) as sum FROM [dbo].[transactions] WHERE txdate>='{self.start_date}' AND txdate<='{self.end_date}' GROUP BY txdate"
+        qry2 = f"SELECT txdate,MIN(txamount) as min,MAX(txamount) as max,AVG(txamount) as average,COUNT(txamount) as count,SUM(txamount) as sum FROM [dbo].[transactions] WHERE txdate >= '{self.start_date}' AND txdate <= '{self.end_date}' GROUP BY txdate"
         df2 = pd.read_sql(qry2, conn)
-        print(df2)
         sum = 0
         avg = 0
         count = 1
