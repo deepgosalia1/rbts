@@ -149,7 +149,7 @@ def RejectTopUp():
         cid, txdate, txstatus, txid=txid)
     return txn.rejecttopup()
 ########ADD USER APIS#######
-
+#/newuser/0 - client /newuser/1 - trader .../2-manager
 @app.route("/newuser/<id>",methods=['GET'])
 def createUser(id):
     data = request.get_json(force=True)
