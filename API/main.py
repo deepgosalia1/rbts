@@ -27,7 +27,7 @@ def login():
 
 ######TRADER APIS######
 
-# @app.route("/trade")
+# @app.route("/trader")
 # def transaction():
 #     # txid = request.args.get('txid') or use request.form to get body
 #     # done_by = request.args.get('done_by')
