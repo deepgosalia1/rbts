@@ -38,6 +38,13 @@ def transactionSearch():
     return matchedData
 
 
+@app.route("/trader/gettransactions",methods=['GET','POST'])
+def transactionGet():
+    oTrader = Trader.Trader()
+    listData = oTrader.listTransactions()
+    return listData
+
+
 #######MANAGER APIS#########
 
 @app.route("/manager/", methods=['POST', 'GET'])

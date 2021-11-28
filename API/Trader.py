@@ -16,3 +16,11 @@ class Trader:
         json_user_data = dfMatch.to_json(orient = "index")
         parsed_json = json.loads(json_user_data)
         return json.dumps(parsed_json)
+    
+    def listTransactions(slef):
+        conn = cg.connect_to_azure()
+        qry = f"SELECT * FROM [dbo].[transactions]"
+        df = pd.read_sql(qry,conn)
+        json_user_data = df.to_json(orient = "index")
+        parsed_json = json.loads(json_user_data)
+        return json.dumps(parsed_json)
