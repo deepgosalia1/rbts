@@ -94,7 +94,7 @@ def managerMonthly():
     aggregateData = oManager.retrieve_transaction_range_month()
     return aggregateData
 
-
+####CLIENT APIS######
 @app.route("/client/placetrade", methods=['POST', 'GET'])
 def client_place_buyOrder():
     data = request.get_json(force=True)
@@ -118,7 +118,7 @@ def client_getTransactions():
     transactions = client.get_transactions()
     return transactions
 
-
+######TRANSACTION APIS#######
 @app.route("/transactions/topup", methods=['POST', 'GET'])
 def placeTopUpRequest():
     data = request.get_json(force=True)
@@ -136,24 +136,29 @@ def placeTopUpRequest():
 def ApproveTopUp():
     data = request.get_json(force=True)
     txid = data['txid']
+    txtype = data['txtype']
     fiatamount = data['fiatamount']
     txstatus = 1
     cid = data['cid']
     txdate = data['txdate']
     txn = Transaction.Transaction(
-        cid, txdate, txstatus, fiatamount=fiatamount, txid=txid)
+        cid, txdate,txtype, txstatus, fiatamount=fiatamount, txid=txid)
     return txn.approvetopup()
 
 @app.route("/transactions/rejecttopup", methods=['POST', 'GET'])
 def RejectTopUp():
     data = request.get_json(force=True)
     txid = data['txid']
+    txtype = data['txtype']
     txstatus = 2
     cid = data['cid']
     txdate = data['txdate']
+    fiatamount = data['fiatamount']
     txn = Transaction.Transaction(
-        cid, txdate, txstatus, txid=txid)
+        cid, txdate,txtype, txstatus, fiatamount=fiatamount, txid=txid)
     return txn.rejecttopup()
+
+    
 ########ADD USER APIS#######
 #/newuser/0 - client /newuser/1 - trader .../2-manager
 @app.route("/newuser/<id>",methods=['GET'])

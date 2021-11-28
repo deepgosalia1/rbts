@@ -51,6 +51,7 @@ class Transaction:
             # self.id = self.id + 1
             # print(df2.at[0, 'txid'] + 5, type(df2.at[0, 'txid']))
             # user_type = cursor.fetchone()
+            return "success"
         except Exception as e:
             return f"an Error Occured {e}"
 
@@ -60,7 +61,7 @@ class Transaction:
         action = 'Pending'
         try:
             cursor = conn.cursor()
-            qry1 = f"INSERT INTO [dbo].[transactions](cid, txdate, txtype, txstatus, fiatwallet) VALUES ({self.cid},'{self.txdate}',{self.txtype},{self.txstatus},{self.fiatamount})"
+            qry1 = f"INSERT INTO [dbo].[transactions](cid, txdate, txtype, txstatus, fiatamount) VALUES ({self.cid},'{self.txdate}',{self.txtype},{self.txstatus},{self.fiatamount})"
             c = cursor.execute(qry1)
             qry2 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
             df2 = pd.read_sql(qry2, conn)
@@ -74,6 +75,7 @@ class Transaction:
             # self.id = self.id + 1
             # print(df2.at[0, 'txid'] + 5, type(df2.at[0, 'txid']))
             # user_type = cursor.fetchone()
+            return "success"
         except Exception as e:
             return f"an Error Occured {e}"
 
@@ -91,7 +93,7 @@ class Transaction:
             cursor.close()
             # json_user_data = df.to_json(orient="index")
             # parsed_json = json.loads(json_user_data)
-            return True
+            return "success"
         except Exception as e:
             return f"an Error Occured {e}"
 
@@ -107,7 +109,7 @@ class Transaction:
             cursor.close()
             # json_user_data = df.to_json(orient="index")
             # parsed_json = json.loads(json_user_data)
-            return True
+            return "success"
         except Exception as e:
             return f"an Error Occured {e}"
 # t = Transaction(1, '2020-05-15', 0, 0, 5)
