@@ -126,14 +126,14 @@ def client_place_traderTrade():
     # cid, txamount, txtype, commtype, txdate, currBTC
     txamount = data['txamount']
     txtype = data['txtype']
-    txstatus = 1  # approved since indepenedent order
+    txstatus = 0  # approved since indepenedent order
     cid = data['cid']
     commtype = data['commtype']
     txdate = data['txdate']
     currBTC = data['currBTC']
     print(data)
     # txn = ClientBuy.ClientBuy(cid, txdate, txtype, txstatus, txamount, currBTC)
-    # return txn.BuyBTC()
+    return ""
 
 ######TRANSACTION APIS#######
 
