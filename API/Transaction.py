@@ -45,8 +45,9 @@ class Transaction:
             print('df2:', df2, '\n', c, 'txid', txid)
             qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({txid},{self.cid},'{self.txdate}','{action}')"
             c = cursor.execute(qry2)
-            cursor.commit()
+            conn.commit()
             cursor.close()
+            conn.close()
             #user_type = cursor.fetchone()[0]
             # self.id = self.id + 1
             # print(df2.at[0, 'txid'] + 5, type(df2.at[0, 'txid']))
@@ -62,15 +63,16 @@ class Transaction:
         try:
             cursor = conn.cursor()
             qry1 = f"INSERT INTO [dbo].[transactions](cid, txdate, txtype, txstatus, fiatamount) VALUES ({self.cid},'{self.txdate}',{self.txtype},{self.txstatus},{self.fiatamount})"
-            c = cursor.execute(qry1)
+            cursor.execute(qry1)
             qry2 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
             df2 = pd.read_sql(qry2, conn)
             txid = df2.at[0, 'txid']
-            print('df2:', df2, '\n', c, 'txid', txid)
+            print('df2:', df2, '\n', 'txid', txid)
             qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({txid},{self.cid},'{self.txdate}','{action}')"
-            c = cursor.execute(qry2)
-            cursor.commit()
+            cursor.execute(qry2)
+            conn.commit()
             cursor.close()
+            conn.close()
             #user_type = cursor.fetchone()[0]
             # self.id = self.id + 1
             # print(df2.at[0, 'txid'] + 5, type(df2.at[0, 'txid']))
@@ -90,7 +92,9 @@ class Transaction:
             cursor.execute(qry0)
             cursor.execute(qry)
             cursor.execute(qry2)
+            conn.commit()
             cursor.close()
+            conn.close()
             # json_user_data = df.to_json(orient="index")
             # parsed_json = json.loads(json_user_data)
             return "success"
@@ -106,7 +110,9 @@ class Transaction:
             qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({self.txid},{self.cid},'{self.txdate}','{action}')"
             cursor.execute(qry)
             cursor.execute(qry2)
+            conn.commit()
             cursor.close()
+            conn.close()
             # json_user_data = df.to_json(orient="index")
             # parsed_json = json.loads(json_user_data)
             return "success"

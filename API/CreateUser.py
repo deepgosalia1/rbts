@@ -20,19 +20,21 @@ class CreateUser:
         self.clientzip = clientzip
         self.clientstate = clientstate
         self.clientcountry = clientcoutnry
-        self.id = id
+        self.id = 1
     
 
     def createClient(self):
         conn = cg.connect_to_azure()
         try:
             cursor = conn.cursor()
-            qry1 = f"INSERT INTO [dbo].[users](userid,username,pass_hash,type) VALUES ({self.id},'{self.username}','{self.password}','{self.type}')"
-            qry2 = f"INSERT INTO [dbo].[client](cid,email,btcwallet,fiatwallet,phone,fname,lname,clientstatus,clientstreet,clientzip,clientstate,clientcountry) VALUES ({id},'{self.email}',0,0,{self.ph_no},'{self.first_name}','{self.last_name}',0,'{self.clientstreet}','{self.clientzip}','{self.clientstate}','{self.clientcountry}')"
+            qry1 = f"INSERT INTO [dbo].[users](username,pass_hash,type) VALUES ('{self.username}','{self.password}','{self.type}')"
+            qry2 = f"INSERT INTO [dbo].[client](email,btcwallet,fiatwallet,phone,fname,lname,clientstatus,clientstreet,clientzip,clientstate,clientcountry) VALUES ('{self.email}',0,0,{self.ph_no},'{self.first_name}','{self.last_name}',0,'{self.clientstreet}','{self.clientzip}','{self.clientstate}','{self.clientcountry}')"
             #user_type = cursor.fetchone()[0]
             cursor.execute(qry1)
             cursor.execute(qry2)
+            conn.commit()
             cursor.close()
+            conn.close()
             self.id = self.id + 1
             # user_type = cursor.fetchone()
         except Exception as e:
@@ -47,7 +49,9 @@ class CreateUser:
             #user_type = cursor.fetchone()[0]
             cursor.execute(qry1)
             cursor.execute(qry2)
+            conn.commit()
             cursor.close()
+            conn.close()
             self.id = self.id + 1
             # user_type = cursor.fetchone()
         except Exception as e:
@@ -62,7 +66,9 @@ class CreateUser:
             #user_type = cursor.fetchone()[0]
             cursor.execute(qry1)
             cursor.execute(qry2)
+            conn.commit()
             cursor.close()
+            conn.close()
             self.id = self.id + 1
             # user_type = cursor.fetchone()
         except Exception as e:

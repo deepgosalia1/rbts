@@ -3,6 +3,7 @@ from flask_cors import CORS
 import Login
 import json
 import CreateUser
+import ClientBuy
 import Manager
 import Transaction
 import Client
@@ -117,6 +118,18 @@ def client_getTransactions():
     client = Client.Client(cid)
     transactions = client.get_transactions()
     return transactions
+
+@app.route("/client/placetrade", methods=['POST', 'GET'])
+def client_place_buyOrder():
+    data = request.get_json(force=True)
+    txamount = data['txamount']
+    txtype = data['txtype']
+    txstatus = 0  # pending, when the first time order is placed
+    cid = data['cid']
+    txdate = data['txdate']
+    txn = ClientBuy.ClientBuy(
+        cid, txdate, txtype, txstatus,txamount=txamount)
+    return txn.BuyBTC()
 
 ######TRANSACTION APIS#######
 @app.route("/transactions/topup", methods=['POST', 'GET'])
