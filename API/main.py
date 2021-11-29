@@ -120,7 +120,7 @@ def client_getTransactions():
     return transactions
 
 @app.route("/client/placetrade", methods=['POST', 'GET'])
-def client_place_buyOrder():
+def client_place_buyOrders():
     data = request.get_json(force=True)
     txamount = data['txamount']
     txtype = data['txtype']
