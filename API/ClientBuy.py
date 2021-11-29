@@ -1,3 +1,5 @@
+import config as cg
+import pandas as pd
 class ClientBuy:
 
     global id
@@ -34,10 +36,13 @@ class ClientBuy:
                         btc_wallet = btc_wallet + amount
                         qry3 = f"UPDATE [dbo].[client] SET btcwallet=btc_wallet,fiatwallet=fiat_wallet WHERE cid = {self.cid}"
                         qry1 = f"INSERT INTO [dbo].[transactions](cid, txdate, txtype, txstatus, txamount) VALUES ({self.cid},'{self.txdate}','{self.txtype}','{self.txstatus}','{self.txamount}')"
-                        qry4 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({txid},{self.cid},'{self.txdate}','1')"
+                        qry4 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({self.txid},{self.cid},'{self.txdate}','1')"
                         cursor.execute(qry3)
                         cursor.execute(qry1)
                         cursor.execute(qry4)
+                        conn.commit()
+                        cursor.close()
+                        conn.close()
                         return "success"
                 else :
                         return "No sufficient Balance to execute buy request"
@@ -47,14 +52,15 @@ class ClientBuy:
                         fiat_wallet = fiat_wallet + amount
                         qry3 = f"UPDATE [dbo].[client] SET btcwallet=btc_wallet,fiatwallet=fiat_wallet WHERE cid = {self.cid}"
                         qry1 = f"INSERT INTO [dbo].[transactions](cid, txdate, txtype, txstatus, txamount) VALUES ({self.cid},'{self.txdate}','{self.txtype}','{self.txstatus}','{self.txamount}')"
-                        qry4 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({txid},{self.cid},'{self.txdate}','1')"
+                        qry4 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({self.txid},{self.cid},'{self.txdate}','1')"
                         cursor.execute(qry3)
                         cursor.execute(qry1)
                         cursor.execute(qry4)
+                        conn.commit()
+                        cursor.close()
+                        conn.close()
                         return "success"
                 else:
                         return "No sufficient Bitcoins to sell"
-                cursor.commit()
-                cursor.close()
         except Exception as e:
             return f"an Error Occured {e}"
