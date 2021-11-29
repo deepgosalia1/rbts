@@ -17,8 +17,8 @@ export const placeIndependentTrade = async (cid, txamount, txtype, txdate, currB
   return await callApi({ endpoint: 'client/independentTrade', method: 'post', body: { cid, txamount, txtype, txdate, currBTC: currBTCPriceinUSD } })
 };
 
-export const placeTraderDependentTrade = async (cid, txamount, txtype, txstatus, txdate, currBTCPriceinUSD) => {
-  return await callApi({ endpoint: 'client/dependentTrade', method: 'post', body: { cid, txamount, txtype, txstatus, txdate, currBTC: currBTCPriceinUSD } })
+export const placeTraderDependentTrade = async (cid, txamount, txtype, commtype, txdate, currBTCPriceinUSD) => {
+  return await callApi({ endpoint: 'client/dependentTrade', method: 'post', body: { cid, txamount, txtype, commtype, txdate, currBTC: currBTCPriceinUSD } })
 };
 
 export const placeTopUpRequest = async (cid, fiatamount, txdate) => {
