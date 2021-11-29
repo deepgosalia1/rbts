@@ -37,9 +37,6 @@ const ClientView = (props) => {
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
                     <TradingPage logout={props.logout} traderView={false} userData={clientData} />
                 </Grid>
-                {/* <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <SearchPage />
-                </Grid> */}
             </Grid>
             <Grid container flex flexDirection={'row'}>
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>

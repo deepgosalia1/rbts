@@ -13,7 +13,11 @@ function App() {
   const [type, setType] = useState('')
   const logout = () => setType('')
   const [userObj, setUserObj] = useState([])
-  
+
+  useEffect(() => {
+    console.log('hello', userObj)
+  }, [userObj])
+
   return (
     <MainGrid container flex flexDirection={'row'} style={{ height: '100vh' }}>
       <Grid item md={12} lg={12}
@@ -24,7 +28,7 @@ function App() {
         }}
       >
         {type !== '' && <Grid item md={12} lg={12} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <LogoutButton text="Logout" onClick={() => {
+          <LogoutButton text={`Logout, ${userObj?.username}`} onClick={() => {
             logout()
           }} />
         </Grid>}

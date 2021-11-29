@@ -46,6 +46,13 @@ def transactionGet():
     return listData
 
 
+@app.route("/trader/getPendingTransactions", methods=['POST', 'GET'])
+def pendingTransaction():
+    oTrader = Trader.Trader()
+    txns = oTrader.pendingTransactions()
+    return txns
+
+
 #######MANAGER APIS#########
 
 @app.route("/manager/", methods=['POST', 'GET'])
@@ -63,11 +70,12 @@ def managerData():
 @app.route("/manager/daily", methods=['POST', 'GET'])
 def managerDaily():
     data = request.get_json(force=True)
-    type = data['type']
-    id = data['id']
+    print(data)
+    # type = data['type']
+    # id = data['id']
     start_date = data['start_date']
     end_date = data['end_date']
-    oManager = Manager.Manager(type, id, start_date, end_date)
+    oManager = Manager.Manager(start_date, end_date)
     aggregateData = oManager.retrieve_transaction_range_day()
     return aggregateData
 
@@ -75,11 +83,11 @@ def managerDaily():
 @app.route("/manager/weekly", methods=['POST', 'GET'])
 def managerWeekly():
     data = request.get_json(force=True)
-    type = data['type']
-    id = data['id']
+    # type = data['type']
+    # id = data['id']
     start_date = data['start_date']
     end_date = data['end_date']
-    oManager = Manager.Manager(type, id, start_date, end_date)
+    oManager = Manager.Manager(start_date, end_date)
     aggregateData = oManager.retrieve_transaction_range_week()
     return aggregateData
 
@@ -87,11 +95,11 @@ def managerWeekly():
 @app.route("/manager/monthly", methods=['POST', 'GET'])
 def managerMonthly():
     data = request.get_json(force=True)
-    type = data['type']
-    id = data['id']
+    # type = data['type']
+    # id = data['id']
     start_date = data['start_date']
     end_date = data['end_date']
-    oManager = Manager.Manager(type, id, start_date, end_date)
+    oManager = Manager.Manager(start_date, end_date)
     aggregateData = oManager.retrieve_transaction_range_month()
     return aggregateData
 
@@ -120,6 +128,7 @@ def client_place_buyOrders():
     txn = ClientBuy.ClientBuy(cid, txdate, txtype, txstatus, txamount, currBTC)
     return txn.BuyBTC()
 
+
 @app.route("/client/dependentTrade", methods=['POST', 'GET'])
 def client_place_traderTrade():
     data = request.get_json(force=True)
@@ -138,6 +147,25 @@ def client_place_traderTrade():
 ######TRANSACTION APIS#######
 
 
+@app.route("/transactions/approveTrade", methods=['POST', 'GET'])
+def ApproveTrade():
+    # will only APPROVE either BUY or SELL trade (not topup/recharge)
+    data = request.get_json(force=True)
+    txid = data['txid']
+    currBTC = data['currBTC']
+    # pending api
+    return ''
+
+
+@app.route("/transactions/rejectTrade", methods=['POST', 'GET'])
+def RejectTrade():
+    # will only REJECT either BUY or SELL trade (not topup/recharge)
+    data = request.get_json(force=True)
+    txid = data['txid']
+    # pending api
+    return ''
+
+
 @app.route("/transactions/topup", methods=['POST', 'GET'])
 def placeTopUpRequest():
     data = request.get_json(force=True)
@@ -151,7 +179,7 @@ def placeTopUpRequest():
     return txn.placeRechargeRequest()
 
 
-@app.route("/transactions/approvetopup", methods=['POST', 'GET'])
+@app.route("/transactions/approveTopup", methods=['POST', 'GET'])
 def ApproveTopUp():
     data = request.get_json(force=True)
     txid = data['txid']

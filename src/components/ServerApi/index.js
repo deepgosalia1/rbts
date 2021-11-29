@@ -32,3 +32,27 @@ export const ApproveTopupRequet = async (txid, cid, fiatamount, txdate) => {
 export const RejectTopup = async (txid, cid, txdate) => {
   return await callApi({ endpoint: 'transactions/rejectTopup', method: 'post', body: { txid, cid, txdate } })
 };
+
+export const getPendingTransactions = async () => {
+  return await callApi({ endpoint: 'trader/getPendingTransactions', method: 'get' })
+};
+
+export const ApproveTrade = async (txid, currBTC) => {
+  return await callApi({ endpoint: 'transactions/approveTrade', method: 'post', body: { txid, currBTC } })
+};
+
+export const RejectTrade = async (txid, currBTC) => {
+  return await callApi({ endpoint: 'transactions/rejectTrade', method: 'post', body: { txid } })
+};
+
+export const getDailyData = async (start_date, end_date) => {
+  return await callApi({ endpoint: 'manager/daily', method: 'post', body: { start_date, end_date } })
+};
+
+export const getWeeklyData = async (start_date, end_date) => {
+  return await callApi({ endpoint: 'manager/weekly', method: 'post', body: { start_date, end_date } })
+};
+
+export const getMonthlyData = async (start_date, end_date) => {
+  return await callApi({ endpoint: 'manager/monthly', method: 'post', body: { start_date, end_date } })
+};

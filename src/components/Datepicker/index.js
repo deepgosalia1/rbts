@@ -6,13 +6,9 @@ import { Box, Text } from 'grommet';
 import { Grid, Input, MenuItem, MenuList, TextField } from '@mui/material'
 
 
-export default function Datepick() {
-  // const [startDate, setStartDate] = useState();
-  const [dateRange, setDateRange] = useState([null], [null])
-  const [startDate, endDate] = dateRange;
-  const [Login, setLogin] = useState('');
-  const [snackMessage, setSnackMessage] = useState('')
-  const [open, setSnack] = useState(false)
+export default function Datepick(props) {
+  const { setDates, startDate, endDate, searchData } = props
+
 
   return (
     <>
@@ -26,7 +22,7 @@ export default function Datepick() {
                 startDate={startDate}
                 endDate={endDate}
                 onChange={(update) => {
-                  setDateRange(update);
+                  setDates(update)
                 }}
                 withPortal
               />
@@ -35,6 +31,7 @@ export default function Datepick() {
           <div style={{ justifyContent: 'center', marginRight: 500, marginTop: 10 }}>
             <ConfirmButton
               onClick={() => {
+                searchData()
               }}>Search</ConfirmButton>
           </div>
         </Grid>

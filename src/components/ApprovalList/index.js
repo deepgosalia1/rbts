@@ -2,16 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Grid, IconButton, Input, MenuItem, MenuList, TextField } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import { Box, Button, Text, TextInput } from 'grommet';
-import { ApproveTopupRequet, getBTCPrice, RejectTopup } from '../ServerApi';
+import { ApproveTopupRequet, getBTCPrice, getPendingTransactions, RejectTopup, ApproveTrade, RejectTrade } from '../ServerApi';
 import styled from 'styled-components';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
-import TradingPage from '../TradingPage';
-import { SearchAdvanced } from 'grommet-icons';
 import { DataGrid } from '@mui/x-data-grid';
-import SearchPage from '../SearchPage';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
+import ObjectsToArray from '../utils/objToArray';
+import formatDate from '../utils/getFormattedDate';
 
 const styles = {
     root: {
@@ -22,83 +19,101 @@ const styles = {
     }
 };
 
-const rows = [
-    { id: 1, cid: 'Snow', CBalancebtc: 'Jon', CBalancewal: 35, timepass: '' },
-    { id: 2, cid: 'Snow', CBalancebtc: 'Jon', CBalancewal: 35, timepass: '' },
-    { id: 3, cid: 'Snow', CBalancebtc: 'Jon', CBalancewal: 35, timepass: '' },
-    { id: 4, cid: 'Snow', CBalancebtc: 'Jon', CBalancewal: 35, timepass: '' },
-    { id: 5, cid: 'Snow', CBalancebtc: 'Jon', CBalancewal: 35, timepass: '' },
-    { id: 6, cid: 'Snow', CBalancebtc: 'Jon', CBalancewal: 35, timepass: '' },
-    { id: 7, cid: 'Snow', CBalancebtc: 'Jon', CBalancewal: 35, timepass: '' },
-    { id: 8, cid: 'Snow', CBalancebtc: 'Jon', CBalancewal: 35, timepass: '' },
-    { id: 9, cid: 'Snow', CBalancebtc: 'Jon', CBalancewal: 35, timepass: '' },
-];
-
-
-
 const ApprovalList = (props) => {
-    const { Header = 'Needs Approval', showSearch = false, showHeader = true, traderData } = props
-
-    const [searchValue, setSearchvalue] = useState('')
-    const [resultList, setResult] = useState(rows)
-    const [pendingData, setData] = useState(rows);
-    const callSearchAPI = async () => {
-        console.log('Search API is called here.')
+    const { Header = 'Needs Approval', showSearch = false, showHeader = true, traderData, btc } = props
+    const [resultList, setResultList] = useState([])
+    
+    const loadPendingTransactions = async () => {
+        await getPendingTransactions().then((res) => {
+            console.log(ObjectsToArray(res))
+            if (res) setResultList(ObjectsToArray(res))
+        })
     }
 
     const columns = [
-        { field: 'id', headerName: 'TxID', width: 90 },
+        { field: 'txid', headerName: 'TX ID', width: 90 },
         {
             field: 'cid',
             headerName: 'CID',
-            width: 150,
+            width: 90,
             editable: true,
         },
         {
-            field: 'CBalancebtc',
-            headerName: 'BTC balance',
-            width: 150,
-            editable: true,
-        },
-        {
-            field: 'CBalancewal',
-            headerName: 'Wallet Bal',
-            type: 'number',
-            width: 110,
-            editable: true,
-        },
-        {
-            field: 'type',
+            field: 'txtype',
             headerName: 'Type',
-            width: 110,
-            editable: true,
+            width: 100,
+            renderCell: (params) => {
+                let cellValue = params.row.txtype === 0 ? 'Buy' : params.row.txtype === 1 ? 'Sell' : 'Recharge'
+                return (
+                    <div>
+                        {cellValue}
+                    </div>
+                )
+            },
         },
         {
-            field: 'timepass',
+            field: 'txamount',
+            headerName: 'Amount',
+            width: 110,
+            renderCell: (params) => {
+                let cellValue = params.row.txtype === 2 ? `${params.row.fiatamount || 0} USD` : `${params.row.txamount} BTC`
+                return (
+                    <div>
+                        {cellValue}
+                    </div>
+                )
+            },
+        },
+        {
+            field: 'txdate',
+            headerName: 'Order Date',
+            width: 150,
+            renderCell: (params) => {
+                let cellValue = formatDate(params.row.txdate)
+                return (
+                    <div>
+                        {cellValue}
+                    </div>
+                )
+            },
+        },
+        {
+            field: 'txstatus',
             headerName: 'Decision',
-            description: 'This column has a value getter and is not sortable.',
             sortable: false,
             width: 160,
             renderCell: (params) => {
                 return (
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
-                        <IconButton aria-label="delete" onClick={() => {
+                        <IconButton aria-label="delete" onClick={async () => {
                             // state Update with filter to remove the clicked row
-                            ApproveTopupRequet(params.txid, params.cid, params.fiatamount, params.txdate).then(() => {
-                                setData(prev => prev.filter(p => p.id != params.id))
+                            if (params.row.txtype === 2) {
+                                await ApproveTopupRequet(params.row.txid, params.row.cid, params.row.fiatamount, params.row.txdate).then(() => {
+                                    setResultList(prev => prev.filter(p => p.id != params.row.id))
 
-                            })
-                            // add api to update too
+                                })
+                            } else {
+                                // place the approval Buy/Sell api here
+                                await ApproveTrade(params.row.txid, btc).then(() => {
+                                    setResultList(prev => prev.filter(p => p.id != params.row.id))
+                                })
+                            }
                         }}>
                             <CheckIcon />
                         </IconButton>
-                        <IconButton aria-label="delete" onClick={() => {
+                        <IconButton aria-label="delete" onClick={async () => {
                             // state Update with filter to remove the clicked row
-                            RejectTopup(params.txid, params.cid, params.txdate).then(() => {
-                                setData(prev => prev.filter(p => p.id != params.id))
+                            if (params.row.txtype === 2) {
+                                RejectTopup(params.row.txid, params.row.cid, params.row.txdate).then(() => {
+                                    setResultList(prev => prev.filter(p => p.id != params.row.id))
 
-                            })
-                            // add api to update too
+                                })
+                            } else {
+                                // place the rejected Buy/Sell api here
+                                await RejectTrade(params.row.txid).then(() => {
+                                    setResultList(prev => prev.filter(p => p.id != params.row.id))
+                                })
+                            }
                         }}>
                             <ClearIcon />
                         </IconButton>
@@ -108,30 +123,19 @@ const ApprovalList = (props) => {
         },
     ];
 
+    useEffect(() => {
+        loadPendingTransactions()
+    }, [])
+
     return (
         <>
             <DivHeader>
                 {showHeader && <HeaderText>
                     {Header}
                 </HeaderText>}
-                {showSearch && <SearchInput
-                    placeholder="Search Clients..."
-                    value={searchValue}
-                    onChange={event => setSearchvalue(event.target.value)}
-                    onBlur={async () => {
-                        // call the search api here once its ready from the backend
-                        await callSearchAPI()
-                    }}
-                    // onSubmit={async ()=>{
-                    //     // call the search api here once its ready from the backend
-                    //      await callSearchAPI()
-                    // }}
-                    color={'white'}
-                    icon={<SearchAdvanced color={'grey'} />}
-                />}
                 <TableDiv>
                     <DataGrid
-                        rows={pendingData}
+                        rows={resultList}
                         columns={columns}
                         pageSize={5}
                         autoHeight
@@ -139,6 +143,7 @@ const ApprovalList = (props) => {
                         isCellEditable={false}
                         style={{ color: 'white' }}
                         rowsPerPageOptions={[5]}
+                        getRowId={(params) => { return params.txid }}
                     />
                 </TableDiv>
 

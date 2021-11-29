@@ -21,6 +21,13 @@ const styles = {
 
 const TraderView = (props) => {
     const { traderData } = props
+    const [btc, setBTC] = useState()
+    useEffect(() => {
+        async function currPrice() {
+            return await getBTCPrice().then(val => setBTC(val.bpi.USD.rate_float))
+        }
+        currPrice()
+    }, [])
     return (
         <Grid container flex flexDirection={'column'}>
             <Grid container flex flexDirection={'row'}>
@@ -36,7 +43,7 @@ const TraderView = (props) => {
                     <SearchPage showSearch={false} Header={'Recent Transactions'} showHeader />
                 </Grid>
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <ApprovalList traderData={traderData} />
+                    {btc && <ApprovalList traderData={traderData} currBTC={btc} />}
                 </Grid>
             </Grid>
         </Grid>

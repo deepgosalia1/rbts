@@ -10,6 +10,7 @@ import ManagerClientSearchPage from '../ManagerClientSearch';
 import ManagerTraderSearchPage from '../ManagerTraderSearch';
 import Datepick from '../Datepicker';
 import TradingView from '../Histograms';
+import Histograms from '../Histograms';
 
 const styles = {
     root: {
@@ -34,7 +35,7 @@ const ManagerView = (props) => {
                 </Grid>
             </Grid>
             <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                <TradingView />
+                <Histograms />
             </Grid>
         </>
     )
