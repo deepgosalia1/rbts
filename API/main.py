@@ -153,6 +153,7 @@ def ApproveTrade():
     data = request.get_json(force=True)
     txid = data['txid']
     currBTC = data['currBTC']
+    txtype = data['txtype']
     # pending api
     return ''
 
@@ -162,6 +163,7 @@ def RejectTrade():
     # will only REJECT either BUY or SELL trade (not topup/recharge)
     data = request.get_json(force=True)
     txid = data['txid']
+    txtype = data['txtype']
     # pending api
     return ''
 
