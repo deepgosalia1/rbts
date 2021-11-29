@@ -10,13 +10,14 @@ class ClientBuy:
     # //insert into transactions (cid, txdate, txtype, txstatus, txamount) values (1, date, 0,0, 50);
     # //insert into logs (cid, txid, time) values (1, txid, date);
 
-    def __init__(self, cid, txdate, txtype, txstatus, txamount, txid=None):
+    def __init__(self, cid, txdate, txtype, txstatus, txamount,btc_amt, txid=None):
         self.cid = cid
         self.txdate = txdate
         self.txtype = txtype
         self.txstatus = txstatus
         self.txamount = txamount
         self.txid = txid
+        self.btc_amount = btc_amt
 
     def BuyBTC(self):
         conn = cg.connect_to_azure()
@@ -30,8 +31,8 @@ class ClientBuy:
             #fiat wallet
             fiat_wallet = c['fiatwallet'][0]
             print("fiat",fiat_wallet)
-            btc_amount = 20 #We need to get it dynamically from the coin desk api.
-            amount = self.txamount * btc_amount
+            #btc_amount = 20 #We need to get it dynamically from the coin desk api.
+            amount = self.txamount * self.btc_amount
             if ( self.txstatus == 0 ) :
                 if ( fiat_wallet > amount ) :
                         fiat_wallet = fiat_wallet - amount

@@ -114,8 +114,9 @@ def client_place_buyOrders():
     txtype = data['txtype']
     txstatus = 0  # pending, when the first time order is placed
     cid = data['cid']
+    btc_amt = data['btcamount']
     txdate = data['txdate']
-    txn = ClientBuy.ClientBuy(cid, txdate, txtype, txstatus,txamount=txamount)
+    txn = ClientBuy.ClientBuy(cid, txdate, txtype, txstatus,txamount=txamount,btc_amt=btc_amt,txid=None)
     return txn.BuyBTC()
 
 ######TRANSACTION APIS#######
