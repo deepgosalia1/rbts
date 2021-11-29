@@ -13,8 +13,12 @@ export const getClientTransactions = async (id) => {
   return await callApi({ endpoint: 'client/transactions', method: 'post', body: { cid: id } })
 };
 
-export const placeTrade = async (cid, txamount, commtype, txtype, txdate) => {
-  return await callApi({ endpoint: 'client/placetrade', method: 'post', body: { cid, txamount, commtype, txtype, txdate } })
+export const placeIndependentTrade = async (cid, txamount, txtype, txdate, currBTCPriceinUSD) => {
+  return await callApi({ endpoint: 'client/independentTrade', method: 'post', body: { cid, txamount, txtype, txdate, currBTC: currBTCPriceinUSD } })
+};
+
+export const placeTraderDependentTrade = async (cid, txamount, txtype, txstatus, txdate, currBTCPriceinUSD) => {
+  return await callApi({ endpoint: 'client/dependentTrade', method: 'post', body: { cid, txamount, txtype, txstatus, txdate, currBTC: currBTCPriceinUSD } })
 };
 
 export const placeTopUpRequest = async (cid, fiatamount, txdate) => {

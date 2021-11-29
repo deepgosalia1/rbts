@@ -13,9 +13,7 @@ function App() {
   const [type, setType] = useState('')
   const logout = () => setType('')
   const [userObj, setUserObj] = useState([])
-  // useEffect(() => {
-  //   // console.log('logged in user is:', userObj)
-  // }, [userObj])
+  
   return (
     <MainGrid container flex flexDirection={'row'} style={{ height: '100vh' }}>
       <Grid item md={12} lg={12}

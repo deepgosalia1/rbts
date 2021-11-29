@@ -17,7 +17,7 @@ class Trader:
         parsed_json = json.loads(json_user_data)
         return json.dumps(parsed_json)
     
-    def listTransactions(slef):
+    def listTransactions(self):
         conn = cg.connect_to_azure()
         qry = f"SELECT * FROM [dbo].[transactions]"
         df = pd.read_sql(qry,conn)

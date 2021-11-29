@@ -30,7 +30,7 @@ def login():
 
 ######TRADER APIS######
 
-@app.route("/trader/search",methods=['GET','POST'])
+@app.route("/trader/search", methods=['GET', 'POST'])
 def transactionSearch():
     data = request.get_json(force=True)
     key = data['key']
@@ -39,7 +39,7 @@ def transactionSearch():
     return matchedData
 
 
-@app.route("/trader/gettransactions",methods=['GET','POST'])
+@app.route("/trader/gettransactions", methods=['GET', 'POST'])
 def transactionGet():
     oTrader = Trader.Trader()
     listData = oTrader.listTransactions()
@@ -98,7 +98,6 @@ def managerMonthly():
 ####CLIENT APIS######
 
 
-
 @app.route("/client/transactions", methods=['POST', 'GET'])
 def client_getTransactions():
     data = request.get_json(force=True)
@@ -107,19 +106,23 @@ def client_getTransactions():
     transactions = client.get_transactions()
     return transactions
 
-@app.route("/client/placetrade", methods=['POST', 'GET'])
+
+@app.route("/client/independentTrade", methods=['POST', 'GET'])
 def client_place_buyOrders():
     data = request.get_json(force=True)
     txamount = data['txamount']
     txtype = data['txtype']
-    txstatus = 0  # pending, when the first time order is placed
+    txstatus = 1  # approved since indepenedent order
     cid = data['cid']
-    btc_amt = data['btcamount']
     txdate = data['txdate']
-    txn = ClientBuy.ClientBuy(cid, txdate, txtype, txstatus,txamount=txamount,btc_amt=btc_amt,txid=None)
+    currBTC = data['currBTC']
+    print(data)
+    txn = ClientBuy.ClientBuy(cid, txdate, txtype, txstatus, txamount, currBTC)
     return txn.BuyBTC()
 
 ######TRANSACTION APIS#######
+
+
 @app.route("/transactions/topup", methods=['POST', 'GET'])
 def placeTopUpRequest():
     data = request.get_json(force=True)
@@ -143,8 +146,9 @@ def ApproveTopUp():
     cid = data['cid']
     txdate = data['txdate']
     txn = Transaction.Transaction(
-        cid, txdate,txtype, txstatus, fiatamount=fiatamount, txid=txid)
+        cid, txdate, txtype, txstatus, fiatamount=fiatamount, txid=txid)
     return txn.approvetopup()
+
 
 @app.route("/transactions/rejecttopup", methods=['POST', 'GET'])
 def RejectTopUp():
@@ -156,13 +160,13 @@ def RejectTopUp():
     txdate = data['txdate']
     fiatamount = data['fiatamount']
     txn = Transaction.Transaction(
-        cid, txdate,txtype, txstatus, fiatamount=fiatamount, txid=txid)
+        cid, txdate, txtype, txstatus, fiatamount=fiatamount, txid=txid)
     return txn.rejecttopup()
 
-    
+
 ########ADD USER APIS#######
-#/newuser/0 - client /newuser/1 - trader .../2-manager
-@app.route("/newuser/<id>",methods=['GET'])
+# /newuser/0 - client /newuser/1 - trader .../2-manager
+@app.route("/newuser/<id>", methods=['GET'])
 def createUser(id):
     data = request.get_json(force=True)
     first_name = data['first_name']
@@ -173,32 +177,23 @@ def createUser(id):
     username = data['username']
     password = data['password']
     ph_no = data['ph_no']
-    type=data['type']
+    type = data['type']
     clientstreet = data['clientstreet']
     clientzip = data['clientzip']
     clientstate = data['clientstate']
     clientcountry = data['clientcountry']
-    oCreateUser = CreateUser.CreateUser(first_name,last_name,age,ssn,email,username,password,ph_no,type,clientstreet,clientzip,clientstate,clientcountry)
+    oCreateUser = CreateUser.CreateUser(first_name, last_name, age, ssn, email, username,
+                                        password, ph_no, type, clientstreet, clientzip, clientstate, clientcountry)
     if id == "0":
         oCreateUser.createClient()
-    elif id=="1":
+    elif id == "1":
         oCreateUser.createTrader()
-    elif id=="2":
+    elif id == "2":
         oCreateUser.createManager()
     else:
         return "incorrect id"
     return "success"
-        
 
-
-# @app.route("/newuser/trader",method = ['GET'])
-# def createTraderUser():
-#     data = request.get_json(force=True)
-#     name = data['name']
-#     username = data['username']
-#     password = data['password']
-
-#     #oCreateTraderUser = CreateUser.CreateUser(name,username,password)
 
 if __name__ == '__main__':
     app.run(

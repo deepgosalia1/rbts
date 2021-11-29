@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, Input, MenuItem, MenuList, TextField } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import { Box, Text } from 'grommet';
-import { getBTCPrice, placeTrade, placeTopUpRequest } from '../ServerApi';
+import { getBTCPrice, placeTrade, placeTopUpRequest, placeIndependentTrade, placeTraderDependentTrade } from '../ServerApi';
 import styled from 'styled-components';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -28,6 +28,7 @@ const styles = {
     }
 };
 const TradeOptions = ['Buy', 'Sell'];
+const traderOptions = ['Independent', 'Trader'];
 const commissionOptions = ['BTC', 'FIAT']
 
 function TradingView(props) {
@@ -45,6 +46,8 @@ function TradingView(props) {
     const [show, setShow] = useState(false);
     const [type, setType] = useState('B')
     const [topUpValue, setTopUpValue] = useState(0)
+    const [viaTrader, setViaTrader] = useState(0);
+
     const handleModalClose = () => {
         setShow(false);
     }
@@ -61,19 +64,38 @@ function TradingView(props) {
             return
         }
         console.log('clientdata', userData)
-        await placeTrade(
-            userData.userid,
-            Number(amount),
-            commSelectedIndex,
-            tradeSelectedIndex,
-            formatDate(new Date())
-        ).then(() => {
-            setSnack(true)
-            setSnackMessage('Transaction Confirmed.')
-        }).catch((e) => {
-            setSnack(true)
-            setSnackMessage('Transaction couldnt be placed.')
-        })
+        if (!viaTrader) {
+            await placeIndependentTrade(
+                userData.userid,
+                Number(amount),
+                tradeSelectedIndex,
+                formatDate(new Date()),
+                btc
+            ).then(() => {
+                setSnack(true)
+                setSnackMessage('Transaction Confirmed.')
+            }).catch((e) => {
+                setSnack(true)
+                setSnackMessage('Transaction couldnt be placed.')
+            })
+        }
+        else {
+            await placeTraderDependentTrade(
+                userData.userid,
+                Number(amount),
+                commSelectedIndex,
+                tradeSelectedIndex,
+                formatDate(new Date()),
+                btc
+            ).then(() => {
+                setSnack(true)
+                setSnackMessage('Transaction Placed.')
+            }).catch((e) => {
+                setSnack(true)
+                setSnackMessage('Transaction couldnt be placed.')
+            })
+        }
+
     }
     const handleTradeMenuItemClick = (event, index) => {
         setTradeSelectedIndex(index);
@@ -126,7 +148,7 @@ function TradingView(props) {
                     <Text onClick={handleModalClose} color={'black'} style={{ cursor: 'pointer', padding: 10, display: 'flex', color: 'black', zIndex: 5 }}>Cancel</Text>
                     <Text onClick={() => {
                         handleModalClose()
-                        placeTopUpRequest(userData.userid, topUpValue, formatDate(new Date())).then(() => { 
+                        placeTopUpRequest(userData.userid, topUpValue, formatDate(new Date())).then(() => {
                             setSnack(true)
                             setSnackMessage('Placed Topup request.')
                         })
@@ -214,6 +236,25 @@ function TradingView(props) {
                                     </div>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', }}>
+                                    <HeaderText>Place Trade via:</HeaderText>
+                                    <MenuList style={{ display: 'flex', flexDirection: 'row', }}>
+                                        {traderOptions.map((option, index) => (
+                                            <MenuItem
+                                                key={option}
+                                                style={{
+                                                    border: index === viaTrader ? '1px solid blue' : 'none',
+                                                    color: 'white',
+                                                    backdropFilter: 'blur(10px)',
+                                                }}
+                                                selected={index === viaTrader}
+                                                onClick={(event) => setViaTrader(index)}
+                                            >
+                                                {option}
+                                            </MenuItem>
+                                        ))}
+                                    </MenuList>
+                                </div>
+                                {viaTrader ? <div style={{ display: 'flex', justifyContent: 'space-between', }}>
                                     <HeaderText>Commision Method</HeaderText>
                                     <MenuList style={{ display: 'flex', flexDirection: 'row', }}>
                                         {commissionOptions.map((option, index) => (
@@ -231,7 +272,7 @@ function TradingView(props) {
                                             </MenuItem>
                                         ))}
                                     </MenuList>
-                                </div>
+                                </div> : <></>}
                                 <ConfirmButton onClick={async () => {
                                     await executeTrade(amount)
                                 }}>{traderView ? 'Confirm' : 'Place Order'}</ConfirmButton>
@@ -239,7 +280,7 @@ function TradingView(props) {
                         </TradeDiv></div>
                 </Grid>
                 <Snackbar open={open} autoHideDuration={2000} onClose={handleClose}>
-                    <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    <Alert onClose={handleClose} severity={"info"} sx={{ width: '100%' }}>
                         Transaction order placed, pending approval
                     </Alert>
                 </Snackbar>
