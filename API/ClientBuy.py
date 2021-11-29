@@ -18,7 +18,7 @@ class ClientBuy:
         self.txtype = txtype
         self.txstatus = txstatus
         self.txamount = txamount
-        self.btc_amount = currBTC
+        self.btc_amount = 0.1
         self.currBTC = currBTC
         self.txid = None
 
@@ -34,8 +34,6 @@ class ClientBuy:
             # fiat wallet
             fiat_wallet = c['fiatwallet'][0]
             print("fiat", fiat_wallet)
-            # btc_amount = 20 #We need to get it dynamically from the coin desk api.
-            #self.currBTC           #this is the curr price of btc in the market that ill be sending from the frontend
             amount = self.txamount * self.btc_amount
             if (self.txtype == 0):
                 if (fiat_wallet > amount):

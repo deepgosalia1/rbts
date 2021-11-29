@@ -37,12 +37,12 @@ export const getPendingTransactions = async () => {
   return await callApi({ endpoint: 'trader/getPendingTransactions', method: 'get' })
 };
 
-export const ApproveTrade = async (txid, currBTC) => {
-  return await callApi({ endpoint: 'transactions/approveTrade', method: 'post', body: { txid, currBTC } })
+export const ApproveTrade = async (txid, currBTC, txtype) => {
+  return await callApi({ endpoint: 'transactions/approveTrade', method: 'post', body: { txid, currBTC, txtype } })
 };
 
-export const RejectTrade = async (txid, currBTC) => {
-  return await callApi({ endpoint: 'transactions/rejectTrade', method: 'post', body: { txid } })
+export const RejectTrade = async (txid, txtype) => {
+  return await callApi({ endpoint: 'transactions/rejectTrade', method: 'post', body: { txid, txtype } })
 };
 
 export const getDailyData = async (start_date, end_date) => {
