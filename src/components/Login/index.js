@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Input, MenuItem, MenuList, TextField } from '@mui/material'
+import { Alert, Grid, Input, MenuItem, MenuList, TextField } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import { Box, Text } from 'grommet';
 import { getBTCPrice, loginUserAPI } from '../ServerApi';
@@ -27,17 +27,21 @@ function Login(props) {
     const [open, setSnack] = useState(false)
 
     const executeLogin = async () => {
-        await loginUserAPI(Username, Password).then(async (res) => {
-            console.log(res[0])
-            setLoginType(res[0].type.toLowerCase() === 'client' ? 'C' : res[0].type.toLowerCase() === 'manager' ? 'M' : 'T')
-            if (res[0].type.toLowerCase() === 'client') {
-                getData(res[0])
-            } else if (res[0].type.toLowerCase() === 'manager') {
-                getData(res[0])
-            } else {
-                getData(res[0])
-            }
-        })
+        try {
+            await loginUserAPI(Username, Password).then(async (res) => {
+                console.log(res[0])
+                setLoginType(res[0].type.toLowerCase() === 'client' ? 'C' : res[0].type.toLowerCase() === 'manager' ? 'M' : 'T')
+                if (res[0].type.toLowerCase() === 'client') {
+                    getData(res[0])
+                } else if (res[0].type.toLowerCase() === 'manager') {
+                    getData(res[0])
+                } else {
+                    getData(res[0])
+                }
+            })
+        } catch (error) {
+            alert('An error occured, retry logging with valid inputs.', String(error))
+        }
     }
     function checkCorrectNumber(value) {
         var regexp = /^\d+(\.\d+)?$/;

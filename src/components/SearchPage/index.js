@@ -73,9 +73,10 @@ const columns = [
 
 
 const SearchPage = (props) => {
+    let transacts = []
     const { Header = '', showSearch = true, showHeader = false, clientMode = false, transactions } = props
     // console.log(transactions.tovalues())
-    let transacts = ObjectsToArray(transactions)
+    if (transactions) transacts = ObjectsToArray(transactions)
     console.log(transacts, transactions)
     const [searchValue, setSearchvalue] = useState('')
     const [resultList, setResult] = useState(transacts.length > 0 && transacts || rows)
@@ -161,7 +162,7 @@ const SearchPage = (props) => {
                 />}
                 <TableDiv>
                     <DataGrid
-                        rows={! clientMode ? rows: transacts.reverse()}
+                        rows={!clientMode ? rows : transacts.reverse()}
                         columns={clientMode ? clientTransactionCols : columns}
                         pageSize={5}
                         autoHeight
