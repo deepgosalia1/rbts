@@ -10,7 +10,7 @@ class ClientBuy:
     # //insert into transactions (cid, txdate, txtype, txstatus, txamount) values (1, date, 0,0, 50);
     # //insert into logs (cid, txid, time) values (1, txid, date);
 
-    def _init_(self, cid, txdate, txtype, txstatus, txamount=None, fiatamount=None, btcamount=None, commamount=None, tid=None, commtype=None, txid=None):
+    def __init__(self, cid, txdate, txtype, txstatus, txamount, txid=None):
         self.cid = cid
         self.txdate = txdate
         self.txtype = txtype
@@ -23,14 +23,16 @@ class ClientBuy:
         try:
             cursor = conn.cursor()
             qry2 = f"SELECT btcwallet,fiatwallet FROM [dbo].[client] WHERE cid = {self.cid}"
-            c = cursor.execute(qry2)
+            c = pd.read_sql(qry2,conn)
             #btc_wallet
-            btc_wallet = c.fetchall()[0][0]
+            btc_wallet = c['btcwallet'][0]
+            print("btc",btc_wallet)
             #fiat wallet
-            fiat_wallet = c.fetchall()[0][1]
+            fiat_wallet = c['fiatwallet'][0]
+            print("fiat",fiat_wallet)
             btc_amount = 20 #We need to get it dynamically from the coin desk api.
-            amount = {self.txamount} * btc_amount
-            if ( {self.txstatus} == 0 ) :
+            amount = self.txamount * btc_amount
+            if ( self.txstatus == 0 ) :
                 if ( fiat_wallet > amount ) :
                         fiat_wallet = fiat_wallet - amount
                         btc_wallet = btc_wallet + amount
@@ -46,9 +48,9 @@ class ClientBuy:
                         return "success"
                 else :
                         return "No sufficient Balance to execute buy request"
-            if ( {self.txstatus} == 1):
-                if ( btc_wallet > {self.txamount}) :
-                        btc_wallet = btc_wallet - {self.txamount}
+            if ( self.txstatus == 1):
+                if ( btc_wallet > self.txamount) :
+                        btc_wallet = btc_wallet - self.txamount
                         fiat_wallet = fiat_wallet + amount
                         qry3 = f"UPDATE [dbo].[client] SET btcwallet=btc_wallet,fiatwallet=fiat_wallet WHERE cid = {self.cid}"
                         qry1 = f"INSERT INTO [dbo].[transactions](cid, txdate, txtype, txstatus, txamount) VALUES ({self.cid},'{self.txdate}','{self.txtype}','{self.txstatus}','{self.txamount}')"

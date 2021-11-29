@@ -96,19 +96,7 @@ def managerMonthly():
     return aggregateData
 
 ####CLIENT APIS######
-@app.route("/client/placetrade", methods=['POST', 'GET'])
-def client_place_buyOrder():
-    data = request.get_json(force=True)
-    print(data)
-    txamount = data['txamount']
-    txtype = data['txtype']
-    txstatus = 0  # pending, when the first time order is placed
-    cid = data['cid']
-    commtype = data['commtype']
-    txdate = data['txdate']
-    txn = Transaction.Transaction(
-        cid, txdate, txtype, txstatus, commtype=commtype, txamount=txamount)
-    return txn.BuyBTC()
+
 
 
 @app.route("/client/transactions", methods=['POST', 'GET'])
@@ -127,8 +115,7 @@ def client_place_buyOrders():
     txstatus = 0  # pending, when the first time order is placed
     cid = data['cid']
     txdate = data['txdate']
-    txn = ClientBuy.ClientBuy(
-        cid, txdate, txtype, txstatus,txamount=txamount)
+    txn = ClientBuy.ClientBuy(cid, txdate, txtype, txstatus,txamount=txamount)
     return txn.BuyBTC()
 
 ######TRANSACTION APIS#######

@@ -1,5 +1,6 @@
 import config as cg
 from flask import json
+import pandas as pd
 
 class CreateUser: 
 
@@ -28,9 +29,13 @@ class CreateUser:
         try:
             cursor = conn.cursor()
             qry1 = f"INSERT INTO [dbo].[users](username,pass_hash,type) VALUES ('{self.username}','{self.password}','{self.type}')"
-            qry2 = f"INSERT INTO [dbo].[client](email,btcwallet,fiatwallet,phone,fname,lname,clientstatus,clientstreet,clientzip,clientstate,clientcountry) VALUES ('{self.email}',0,0,{self.ph_no},'{self.first_name}','{self.last_name}',0,'{self.clientstreet}','{self.clientzip}','{self.clientstate}','{self.clientcountry}')"
-            #user_type = cursor.fetchone()[0]
             cursor.execute(qry1)
+            conn.commit()
+            qry_id = f"SELECT userid FROM [dbo].[users] WHERE username = '{self.username}' and pass_hash = '{self.password}'"
+            df = pd.read_sql(qry_id,conn)
+            c_id = int(df['userid'][0])
+            qry2 = f"INSERT INTO [dbo].[client](cid,email,btcwallet,fiatwallet,phone,fname,lname,clientstatus,clientstreet,clientzip,clientstate,clientcountry) VALUES ({c_id},'{self.email}',0,0,{self.ph_no},'{self.first_name}','{self.last_name}',0,'{self.clientstreet}','{self.clientzip}','{self.clientstate}','{self.clientcountry}')"
+            #user_type = cursor.fetchone()[0]
             cursor.execute(qry2)
             conn.commit()
             cursor.close()
