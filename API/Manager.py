@@ -3,13 +3,14 @@ from flask import jsonify
 from pandas.core import indexing
 from pandas.core.dtypes.missing import notnull
 import config as cg
+from datetime import datetime
 from pandas.io import json
 from datetime import datetime
 
 
 class Manager:
 
-    def __init__(self, type=None, id=None, start_date=None, end_date=None):
+    def __init__(self,start_date, end_date):
         self.type = type
         self.id = id
         self.start_date = start_date
@@ -25,6 +26,7 @@ class Manager:
 
     def retrieve_transaction_range_day(self):
         conn = cg.connect_to_azure()
+        print(self.start_date)
         # get daily aggregates
         qry2 = f"SELECT txdate,MIN(txamount) as min,MAX(txamount) as max,AVG(txamount) as average,COUNT(txamount) as count,SUM(txamount) as sum FROM [dbo].[transactions] WHERE txdate >=? AND txdate <=? GROUP BY txdate"
         params = (self.start_date, self.end_date)
@@ -55,9 +57,11 @@ class Manager:
             lismax.append(df2['max'][i])
             if count % 7 == 0:
                 avg = sum/cnttrans
-                date = f"{df2['txdate'][i-7]} - {df2['txdate'][i]}"
+                date = f"{df2['txdate'][i-6]} - {df2['txdate'][i]}"
+                print(avg,sum,cnttrans,date,min(lismin),max(lismin))
                 dfWeekly.append({'txdate': date, 'min': min(lismin), 'max': max(
-                    lismax), 'avg': avg, 'count': count, 'sum': sum})
+                    lismax), 'avg': avg, 'count': count, 'sum': sum},ignore_index=True)
+                print(dfWeekly)
                 lismax = []
                 lismin = []
                 sum = 0

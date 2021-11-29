@@ -70,7 +70,6 @@ def managerData():
 @app.route("/manager/daily", methods=['POST', 'GET'])
 def managerDaily():
     data = request.get_json(force=True)
-    print(data)
     # type = data['type']
     # id = data['id']
     start_date = data['start_date']
