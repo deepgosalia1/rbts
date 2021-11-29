@@ -58,9 +58,7 @@ class Manager:
             if count % 7 == 0:
                 avg = sum/cnttrans
                 date = f"{df2['txdate'][i-6]} - {df2['txdate'][i]}"
-                print(avg,sum,cnttrans,date,min(lismin),max(lismin))
                 weeklyDf = dfWeekly.append({'txdate':date,'min':min(lismin),'max':max(lismax),'avg':avg,'count':count,'sum':sum},ignore_index=True)
-                print(weeklyDf)
                 lismax = []
                 lismin = []
                 sum = 0
