@@ -167,9 +167,9 @@ function TradingView(props) {
                     padding: 10,
                 }}>
                 <Grid item sm={12} md={12} lg={12}>
-                    <LogoutButton text="Logout" onClick={() => {
+                    {/* <LogoutButton text="Logout" onClick={() => {
                         props?.logout()
-                    }} />
+                    }} /> */}
 
                     <BTCPriceDiv>
                         <Boxx style={{}}>
