@@ -9,6 +9,15 @@ export const getBTCPrice = async (id) => {
   return await callApi({ endpoint: `https://api.coindesk.com/v1/bpi/currentprice.json`, fullUrl: true })
 };
 
+export const getAllTransactions = async (id) => {
+  return await callApi({ endpoint: 'trader/gettransactions', method: 'get' })
+};
+
+export const getAllData = async (type) => {
+  return await callApi({ endpoint: 'manager/gettypedata', method: 'post', body: { type } })
+};
+
+
 export const getClientTransactions = async (id) => {
   return await callApi({ endpoint: 'client/transactions', method: 'post', body: { cid: id } })
 };
@@ -56,3 +65,8 @@ export const getWeeklyData = async (start_date, end_date) => {
 export const getMonthlyData = async (start_date, end_date) => {
   return await callApi({ endpoint: 'manager/monthly', method: 'post', body: { start_date, end_date } })
 };
+
+export const getSearchData = async (searchKey, type) => {
+  return await callApi({ endpoint: 'trader/search', method: 'post', body: { key: searchKey, type } })
+};
+

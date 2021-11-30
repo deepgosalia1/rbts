@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, Input, MenuItem, MenuList, TextField } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import { Box, Text } from 'grommet';
-import { getBTCPrice } from '../ServerApi';
+import { getAllData, getBTCPrice } from '../ServerApi';
 import styled from 'styled-components';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -11,6 +11,7 @@ import ManagerTraderSearchPage from '../ManagerTraderSearch';
 import Datepick from '../Datepicker';
 import TradingView from '../Histograms';
 import Histograms from '../Histograms';
+import SearchPage from '../SearchPage';
 
 const styles = {
     root: {
@@ -22,16 +23,31 @@ const styles = {
 };
 
 const ManagerView = (props) => {
-    const {managerData} = props 
+    const { managerData } = props
+    const [traderData, setTraderData] = useState()
+    const [clientData, setClientData] = useState()
+    const getDefaultData = async () => {
+        await getAllData('trader').then((res) => {
+            console.log(`results are: `, res)
+            setTraderData(res)
+        })
+        await getAllData('client').then((res) => {
+            console.log(`results are: `, res)
+            setClientData(res)
+        })
+    }
+    useEffect(() => {
+        getDefaultData()
+    }, [])
     return (
         <>
             <Grid container flex flexDirection={'row'}>
                 {/* <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}></Grid> */}
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <ManagerClientSearchPage />
+                    {clientData && <SearchPage transactions={clientData} clientSearch={true} />}
                 </Grid>
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <ManagerTraderSearchPage />
+                    {traderData && <SearchPage transactions={traderData} />}
                 </Grid>
             </Grid>
             <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>

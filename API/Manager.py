@@ -10,7 +10,7 @@ from datetime import datetime
 
 class Manager:
 
-    def __init__(self,start_date, end_date):
+    def __init__(self, type=None, id=None, start_date=None, end_date=None):
         self.type = type
         self.id = id
         self.start_date = start_date
@@ -58,9 +58,9 @@ class Manager:
             if count % 7 == 0:
                 avg = sum/cnttrans
                 date = f"{df2['txdate'][i-6]} - {df2['txdate'][i]}"
-                print(avg,sum,cnttrans,date,min(lismin),max(lismin))
+                print(avg, sum, cnttrans, date, min(lismin), max(lismin))
                 dfWeekly.append({'txdate': date, 'min': min(lismin), 'max': max(
-                    lismax), 'avg': avg, 'count': count, 'sum': sum},ignore_index=True)
+                    lismax), 'avg': avg, 'count': count, 'sum': sum}, ignore_index=True)
                 print(dfWeekly)
                 lismax = []
                 lismin = []

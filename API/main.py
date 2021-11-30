@@ -34,7 +34,8 @@ def login():
 def transactionSearch():
     data = request.get_json(force=True)
     key = data['key']
-    oTrader = Trader.Trader(key)
+    type = data['type']
+    oTrader = Trader.Trader(key=key, type=type)
     matchedData = oTrader.searchKey()
     return matchedData
 
@@ -55,14 +56,11 @@ def pendingTransaction():
 
 #######MANAGER APIS#########
 
-@app.route("/manager/", methods=['POST', 'GET'])
+@app.route("/manager/gettypedata", methods=['POST', 'GET'])
 def managerData():
     data = request.get_json(force=True)
     type = data['type']
-    id = data['id']
-    start_date = data['start_date']
-    end_date = data['end_date']
-    oManager = Manager.Manager(type, id, start_date, end_date)
+    oManager = Manager.Manager(type)
     TransData = oManager.retrieve_data()
     return TransData
 

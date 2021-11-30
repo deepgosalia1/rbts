@@ -6,12 +6,13 @@ from flask import jsonify
 
 class Trader:
 
-    def __init__(self, key=None):
+    def __init__(self, key=None, type=None):
         self.key = key
+        self.type = type
 
     def searchKey(self):
         conn = cg.connect_to_azure()
-        qry = f"SELECT txid,t.cid,txdate,txtype,txstatus,commamount,commtype,btcamount,fiatamount,txamount,tid,email,btcwallet,fiatwallet,phone,fname,lname,clientstatus,clientstreet,clientzip,clientstate,clientcountry FROM [dbo].[transactions] t, [dbo].[client] c WHERE t.cid = c.cid"
+        qry = f"SELECT * FROM [dbo].[{self.type}]"
         df = pd.read_sql(qry, conn)
         dfMatch = df[df.apply(lambda row: row.astype(
             str).str.contains(str(self.key)).any(), axis=1)]
@@ -21,7 +22,7 @@ class Trader:
 
     def listTransactions(self):
         conn = cg.connect_to_azure()
-        qry = f"SELECT * FROM [dbo].[transactions]"
+        qry = f"SELECT * FROM [dbo].[transactions] ORDER BY txid DESC"
         df = pd.read_sql(qry, conn)
         json_user_data = df.to_json(orient="index")
         parsed_json = json.loads(json_user_data)

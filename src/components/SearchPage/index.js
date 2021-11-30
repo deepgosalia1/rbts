@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, Input, MenuItem, MenuList, TextField } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import { Box, Text, TextInput } from 'grommet';
-import { getBTCPrice } from '../ServerApi';
+import { getBTCPrice, getSearchData } from '../ServerApi';
 import styled from 'styled-components';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -10,6 +10,7 @@ import TradingPage from '../TradingPage';
 import { SearchAdvanced } from 'grommet-icons';
 import { DataGrid } from '@mui/x-data-grid';
 import ObjectsToArray from '../utils/objToArray';
+import { Button } from '@tsamantanis/react-glassmorphism';
 
 const styles = {
     root: {
@@ -19,125 +20,124 @@ const styles = {
         color: "white"
     }
 };
-const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-];
-
-const clientTransactionRows = [
-    { txid: 1, tid: 123, txtype: 'Buy', Date: Date.now(), status: 'pending' },
-    { txid: 2, tid: 123, txtype: 'Sell', Date: Date.now(), status: 'approved' },
-    { txid: 3, tid: 123, txtype: 'Wallet', Date: Date.now(), status: 'reject' },
-    { txid: 4, tid: 123, txtype: 'USD Wallet', Date: Date.now(), status: 'pending' },
-    { txid: 5, tid: 123, txtype: 'Sell', Date: Date.now(), status: 'approved' },
-    { txid: 6, tid: 123, txtype: 'Buy', Date: Date.now(), status: 'approved' },
-    { txid: 7, tid: 123, txtype: 'Buy', Date: Date.now(), status: 'approved' },
-];
-
-const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    {
-        field: 'firstName',
-        headerName: 'First name',
-        width: 150,
-    },
-    {
-        field: 'lastName',
-        headerName: 'Last name',
-        width: 150,
-    },
-    {
-        field: 'age',
-        headerName: 'Age',
-        type: 'number',
-        width: 110,
-    },
-    {
-        field: 'fullName',
-        headerName: 'Full name',
-        description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        width: 160,
-        valueGetter: (params) =>
-            `${params.getValue(params.id, 'firstName') || ''} ${params.getValue(params.id, 'lastName') || ''
-            }`,
-    },
-];
 
 
 const SearchPage = (props) => {
     let transacts = []
-    const { Header = '', showSearch = true, showHeader = false, clientMode = false, transactions } = props
-    // console.log(transactions.tovalues())
+    const { Header = '', showSearch = true, showHeader = false, clientMode = false, transactions, clientSearch = false } = props
+    // console.log(transactions)
     if (transactions) transacts = ObjectsToArray(transactions)
-    console.log(transacts, transactions)
     const [searchValue, setSearchvalue] = useState('')
-    const [resultList, setResult] = useState(transacts.length > 0 && transacts || rows)
+    const [resultList, setResult] = useState(transacts?.length > 0 && transacts || [])
 
     const callSearchAPI = async () => {
-        console.log('Search API is called here.')
+        if (searchValue !== '' || searchValue !== undefined || searchValue !== null) {
+            if (clientSearch) {
+                await getSearchData(searchValue, 'client').then((res) => {
+                    console.log(`results for ${searchValue} are: `, res)
+                    if (res) setResult(ObjectsToArray(res))
+                })
+            } else {
+                await getSearchData(searchValue, 'trader').then((res) => {
+                    console.log(`results for ${searchValue} are: `, res)
+                    if (res) setResult(ObjectsToArray(res))
+                })
+            }
+        }
     }
 
-
-    const clientTransactionCols = [
-        { field: 'txid', headerName: 'Transact. ID', width: 200 },
+    const SearchClientCols = [
         {
-            field: 'tid',
-            headerName: 'TID',
-            width: 200,
-            renderCell: (params) => {
-                let cellValue = params.row.tid
-                return (
-                    `${cellValue === null ? '-' : cellValue}`
-                )
-            }
-            ,
+            field: 'cid',
+            headerName: 'Client ID',
+            width: 80,
         },
         {
-            field: 'txtype',
-            headerName: 'Type',
-            width: 200,
+            field: 'fname',
+            headerName: 'Name',
+            width: 150,
             renderCell: (params) => {
-                let cellValue = params.row.txtype
-                return (
-                    `${cellValue === 0 ? 'Buy' : cellValue === 1 ? 'Sell' : 'Wallet'}`
-                )
-            }
-            ,
-        },
-        {
-            field: 'txdate',
-            headerName: 'Date',
-            // type: 'number',
-            width: 250,
-            renderCell: (params) => {
-                let cellValue = params.row.txdate
-                return (
-                    `${new Date(cellValue).getMonth()}-${new Date(cellValue).getDate()}-${new Date(cellValue).getFullYear()}`
-                )
-            }
-            ,
-        },
-        {
-            field: 'Status',
-            headerName: 'Status',
-            width: 200,
-            renderCell: (params) => {
-                let cellValue = params.row.txstatus
+                let cellValue = params.row.fname + ' ' + params.row.lname;
                 // console.log(cellValue, params)
                 return (
-                    `${cellValue === 'approved' ? 'Approved' : cellValue === 'rejected' ? 'Rejected' : 'Pending'}`
+                    `${cellValue}`
                 )
             }
             ,
         },
+        { field: 'email', headerName: 'EMail', width: 200 },
+        {
+            field: 'btcwallet',
+            headerName: 'BTC Wallet',
+            width: 100,
+        },
+        {
+            field: 'fiatwallet',
+            headerName: 'USD Wallet',
+            width: 100,
+        },
+        {
+            field: 'phone',
+            headerName: 'Phone',
+            // type: 'number',
+            width: 100,
+        },
+        {
+            field: 'clientstatus',
+            headerName: 'Status',
+            width: 100,
+            renderCell: (params) => {
+                let cellValue = params.row.clientstatus
+                // console.log(cellValue, params)
+                return (
+                    `${cellValue === 1 ? 'Silver' : 'Gold'}`
+                )
+            }
+            ,
+        },
+        {
+            field: 'clientstreet',
+            headerName: 'Address 1',
+            width: 100,
+        },
+        {
+            field: 'clientzip',
+            headerName: 'Zip',
+            width: 100,
+        },
+        {
+            field: 'clientstate',
+            headerName: 'Location',
+            width: 100,
+            renderCell: (params) => {
+                let cellValue = params.row.clientstate + ', ' + params.row.clientcountry
+                return (
+                    `${cellValue}`
+                )
+            }
+            ,
+        },
+    ]
+
+    const SearchTraderCols = [
+        {
+            field: 'tid',
+            headerName: 'Trader ID',
+            width: 80,
+        },
+        {
+            field: 'fname',
+            headerName: 'Name',
+            width: 200,
+            renderCell: (params) => {
+                let cellValue = params.row.fname + ' ' + params.row.lname;
+                return (
+                    `${cellValue}`
+                )
+            }
+            ,
+        },
+
     ]
     return (
         <>
@@ -145,28 +145,34 @@ const SearchPage = (props) => {
                 {showHeader && <HeaderText>
                     {Header}
                 </HeaderText>}
-                {showSearch && <SearchInput
-                    placeholder="Search Clients..."
-                    value={searchValue}
-                    onChange={event => setSearchvalue(event.target.value)}
-                    onBlur={async () => {
-                        // call the search api here once its ready from the backend
-                        await callSearchAPI()
-                    }}
-                    // onSubmit={async ()=>{
-                    //     // call the search api here once its ready from the backend
-                    //      await callSearchAPI()
-                    // }}
-                    color={'white'}
-                    icon={<SearchAdvanced color={'grey'} />}
-                />}
+                {showSearch &&
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
+                        <Button text={`Search`} onClick={async () => {
+                            await callSearchAPI()
+                        }} />
+                        <SearchInput
+                            // placeholder={HeaderText || 'Search'}
+                            value={searchValue}
+                            onChange={event => setSearchvalue(event.target.value)}
+                            onBlur={async () => {
+                                // call the search api here once its ready from the backend
+                                await callSearchAPI()
+                            }}
+                            onSubmitCapture={async () => {
+                                // call the search api here once its ready from the backend
+                                await callSearchAPI()
+                            }}
+                            color={'white'}
+                            icon={<SearchAdvanced color={'grey'} style={{ zIndex: 5 }} onClick={() => { alert('aa') }} />}
+                        />
+                    </div>}
                 <TableDiv>
                     <DataGrid
-                        rows={!clientMode ? rows : transacts.reverse()}
-                        columns={clientMode ? clientTransactionCols : columns}
+                        rows={resultList}
+                        columns={clientSearch ? SearchClientCols : SearchTraderCols}
                         pageSize={5}
                         autoHeight
-                        getRowId={(r) => r.txid || r.id}
+                        getRowId={(r) => r.txid || r.cid || r.tid || r.id}
                         disableSelectionOnClick
                         style={{ color: 'white' }}
                         rowsPerPageOptions={[5]}

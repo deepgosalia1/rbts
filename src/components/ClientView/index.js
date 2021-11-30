@@ -9,6 +9,7 @@ import MuiAlert from '@mui/material/Alert';
 import TradingPage from '../TradingPage';
 import SearchPage from '../SearchPage';
 import ApprovalList from '../ApprovalList';
+import ListPage from '../ListPage';
 
 const styles = {
     root: {
@@ -40,7 +41,7 @@ const ClientView = (props) => {
             </Grid>
             <Grid container flex flexDirection={'row'}>
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <SearchPage showSearch={false} Header={'Your Transactions'} showHeader clientMode transactions={transactions} />
+                    <ListPage showSearch={false} Header={'Your Transactions'} showHeader clientMode transactions={transactions} />
                 </Grid>
             </Grid>
         </Grid>
