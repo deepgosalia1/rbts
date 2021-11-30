@@ -58,10 +58,7 @@ class Manager:
             if count % 7 == 0:
                 avg = sum/cnttrans
                 date = f"{df2['txdate'][i-6]} - {df2['txdate'][i]}"
-                print(avg, sum, cnttrans, date, min(lismin), max(lismin))
-                dfWeekly.append({'txdate': date, 'min': min(lismin), 'max': max(
-                    lismax), 'avg': avg, 'count': count, 'sum': sum}, ignore_index=True)
-                print(dfWeekly)
+                weeklyDf = dfWeekly.append({'txdate':date,'min':min(lismin),'max':max(lismax),'avg':avg,'count':count,'sum':sum},ignore_index=True)
                 lismax = []
                 lismin = []
                 sum = 0
@@ -69,7 +66,7 @@ class Manager:
                 count += 1
             elif not count % 7 == 0:
                 count += 1
-        json_user_data = dfWeekly.to_json(orient="index")
+        json_user_data = weeklyDf.to_json(orient="index")
         parsed_json = json.loads(json_user_data)
         return json.dumps(parsed_json)
 
@@ -93,8 +90,8 @@ class Manager:
             lismax.append(df2['max'][i])
             if count % 30 == 0:
                 avg = sum/cnttrans
-                date = f"{df2['txdate'][i-7]} - {df2['txdate'][i]}"
-                dfMonthly.append({'txdate': date, 'min': min(lismin), 'max': max(
+                date = f"{df2['txdate'][i-29]} - {df2['txdate'][i]}"
+                monthlyDf=dfMonthly.append({'txdate': date, 'min': min(lismin), 'max': max(
                     lismax), 'avg': avg, 'count': count, 'sum': sum})
                 lismax = []
                 lismin = []
@@ -103,6 +100,6 @@ class Manager:
                 count += 1
             elif not count % 7 == 0:
                 count += 1
-        json_user_data = dfMonthly.to_json(orient="index")
+        json_user_data = monthlyDf.to_json(orient="index")
         parsed_json = json.loads(json_user_data)
         return json.dumps(parsed_json)
