@@ -10,7 +10,7 @@ from datetime import datetime
 
 class Manager:
 
-    def __init__(self, type=None, id=None, start_date=None, end_date=None):
+    def __init__(self, start_date=None, end_date=None,type=None,id=None):
         self.type = type
         self.id = id
         self.start_date = start_date
@@ -58,7 +58,7 @@ class Manager:
             if count % 7 == 0:
                 avg = sum/cnttrans
                 date = f"{df2['txdate'][i-6]} - {df2['txdate'][i]}"
-                weeklyDf = dfWeekly.append({'txdate':date,'min':min(lismin),'max':max(lismax),'avg':avg,'count':count,'sum':sum},ignore_index=True)
+                dfWeekly = dfWeekly.append({'txdate':date,'min':min(lismin),'max':max(lismax),'avg':avg,'count':count,'sum':sum},ignore_index=True)
                 lismax = []
                 lismin = []
                 sum = 0
@@ -66,7 +66,7 @@ class Manager:
                 count += 1
             elif not count % 7 == 0:
                 count += 1
-        json_user_data = weeklyDf.to_json(orient="index")
+        json_user_data = dfWeekly.to_json(orient="index")
         parsed_json = json.loads(json_user_data)
         return json.dumps(parsed_json)
 
@@ -91,8 +91,7 @@ class Manager:
             if count % 30 == 0:
                 avg = sum/cnttrans
                 date = f"{df2['txdate'][i-29]} - {df2['txdate'][i]}"
-                monthlyDf=dfMonthly.append({'txdate': date, 'min': min(lismin), 'max': max(
-                    lismax), 'avg': avg, 'count': count, 'sum': sum})
+                dfMonthly=dfMonthly.append({'txdate': date, 'min': min(lismin), 'max': max(lismax), 'avg': avg, 'count': count, 'sum': sum})
                 lismax = []
                 lismin = []
                 sum = 0
@@ -100,6 +99,6 @@ class Manager:
                 count += 1
             elif not count % 7 == 0:
                 count += 1
-        json_user_data = monthlyDf.to_json(orient="index")
+        json_user_data = dfMonthly.to_json(orient="index")
         parsed_json = json.loads(json_user_data)
         return json.dumps(parsed_json)
