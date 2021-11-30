@@ -60,7 +60,7 @@ def pendingTransaction():
 def managerData():
     data = request.get_json(force=True)
     type = data['type']
-    oManager = Manager.Manager(type)
+    oManager = Manager.Manager(type=type)
     TransData = oManager.retrieve_data()
     return TransData
 
