@@ -156,8 +156,12 @@ def ApproveTrade():
     txtype = data['txtype']
     tid = data['tid']
     commtype = data['commtype']
-    # pending api
-    return ''
+    cid = data['cid']
+    txdate = data['txdate']
+    txamount = data['txamount']
+    txstatus = 0
+    approve_trade = DependentTrade.DependentTrade(cid, txdate, txtype, txstatus,txamount,currBTC,commtype,txid=txid, tid=tid)
+    return approve_trade
 
 
 @app.route("/transactions/rejectTrade", methods=['POST', 'GET'])
@@ -166,8 +170,13 @@ def RejectTrade():
     data = request.get_json(force=True)
     txid = data['txid']
     txtype = data['txtype']
-    # pending api
-    return ''
+    txamount = data['txamount']
+    txstatus = 2
+    cid = data['cid']
+    txdate = data['txdate']
+    tid = data['tid']
+    reject_trade = DependentTrade.DependentTrade(cid,txdate,txtype,txstatus,txid=txid,tid=tid)
+    return reject_trade
 
 
 @app.route("/transactions/topup", methods=['POST', 'GET'])

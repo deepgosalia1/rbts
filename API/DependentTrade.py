@@ -1,32 +1,3 @@
-# if he is buys:
-#     if he his btc comm: 
-#         amount_to_check_BTC = 0.005*txamount
-#         amount_to_check_fiat = txamount * btcprice 
-#         if btc_wallet >= amount_to_check_BTC and fiat_wallet >= amount_to_check_fiat:
-#            btc_wallet = btc_wallet + txamount
-#            fiat_wallet = fiat_wallet - amount_to_check_fiat
-#         else: error
-#     else: usd comm:
-#         amount_to_check = txamount * btcprice + (0.008 * txamount * btcprice)
-#         if fiat_wallet >= amount_to_check:
-#             btc_wallet = btc_wallet + txamount
-#             fiat_wallet = fiat_wallet - amount_to_check
-#         else: error
-# else:
-#     if he his btc comm: 
-#         amount_to_check_BTC = 0.005*txamount + txamount
-#         if btc_wallet >= amount_to_check_BTC:
-#            btc_wallet = btc_wallet - amount_to_check_BTC
-#            fiat_wallet = fiat_wallet + amount_to_check_BTC * btcprice
-#         else: error
-#     else: usd comm:
-#         amount_to_check_BTC = txamount
-#         amount_to_check_fiat = 0.005 * txamount * btcprice 
-#         if btc_wallet>=amount_to_check_BTC and fiat_wallet >= amount_to_check_fiat:
-#             btc_wallet = btc_wallet - amount_to_check_BTC
-#             fiat_wallet = fiat_wallet + (txamount * btcprice) - amount_to_check_fiat
-#         else: error
-
 import pandas as pd
 from flask import jsonify
 from pandas.core import indexing
@@ -39,7 +10,7 @@ class DependentTrade:
 
     global id
 
-    def __init__(self, cid, txdate, txtype, txstatus, txamount, currBTC, commtype, txid=None):
+    def __init__(self, cid, txdate, txtype, txstatus, txamount, currBTC=None, commtype=None, txid=None,tid=None):
         self.cid = cid
         self.txdate = txdate
         self.txtype = txtype
@@ -48,6 +19,7 @@ class DependentTrade:
         self.currBTC = currBTC
         self.txid = txid
         self.commtype = commtype
+        self.tid = tid
 
     def place_order(self):
         conn = cg.connect_to_azure()
@@ -85,65 +57,105 @@ class DependentTrade:
             print("fiat", fiat_wallet)
             client_status = c['clientstatus'][0]
             print("clientstatus", client_status)
-            amount = self.txamount * self.currBTC
-            comm_amount = 0
-            # for sell, 
-            if (client_status == 0): #  gold
-                if (self.commtype == 'BTC'):
-                    comm_amount = 0.003 * self.txamount # 0.003 * currBTC price
-                    self.txamount += comm_amount
-                if (self.commtype == 'USD'):
-                    comm_amount = 0.005 * amount # 0.005 * amount
-                    amount += comm_amount
-            if (client_status == 1):
-                if(self.commtype == 'BTC'): # 0.007 * currBTC price
-                    comm_amount = 0.005 * self.txamount
-                    self.txamount += comm_amount
-                if(self.commtype == 'USD'): # 0.01 * amount
-                    comm_amount = 0.008 * amount
-            # amount += comm_amount
-            # for buy if amount < fiat_wallet: # do things
-            # else: err
-            # for sellcheck comm_am < fiatWall #do things else err
             if (self.txtype == 0):
-                if (fiat_wallet > amount):
-                    fiat_wallet = fiat_wallet - amount
-                    btc_wallet = btc_wallet + self.txamount
-
-                    qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
-                    cursor.execute(qry3)
-                    qry1 = f"UPDATE transactions SET txstatus = 1 WHERE txid={self.txid}"
-                    cursor.execute(qry1)
-                    qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
-                    df2 = pd.read_sql(qry4, conn)
-                    txid = df2.at[0, 'txid']
-                    qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action,commtype,commamount) VALUES ({txid},{self.cid},'{self.txdate}','{action}','{self.commtype}',{comm_amount})"
-                    cursor.execute(qry2)
-                    conn.commit()
-                    cursor.close()
-                    conn.close()
-                    return "success"
-                else:
-                    return "No sufficient Bitcoins to buy"
+                if(self.commtype == 'BTC'):
+                    if (client_status == 1):
+                        btc_amount_check = 0.005 * self.txamount
+                        amount_check_fiat = self.txamount * self.currBTC
+                    if ( client_status == 0):
+                        btc_amount_check = 0.0025 * self.txamount
+                        amount_check_fiat = self.txamount * self.currBTC
+                    if (btc_wallet >= btc_amount_check and fiat_wallet >= amount_check_fiat):
+                        btc_wallet = btc_wallet + self.txamount
+                        fiat_wallet = fiat_wallet - amount_check_fiat
+                        qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
+                        cursor.execute(qry3)
+                        qry1 = f"UPDATE transactions SET txstatus = 1 WHERE txid={self.txid}"
+                        cursor.execute(qry1)
+                        qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
+                        df2 = pd.read_sql(qry4, conn)
+                        txid = df2.at[0, 'txid']
+                        qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action,commtype,commamount) VALUES ({txid},{self.cid},'{self.txdate}','{action}','{self.commtype}',{btc_amount_check})"
+                        cursor.execute(qry2)
+                        conn.commit()
+                        cursor.close()
+                        conn.close()
+                        return "success"
+                    else:
+                        return "Error"
+                if ( self.commtype == 'USD'):
+                    if ( client_status == 0):
+                        amount_check = amount + 0.008 * amount
+                    if ( client_status == 1):
+                        amount_check = amount + 0.004 * amount
+                    if ( fiat_wallet > amount_check):
+                        btc_wallet = btc_wallet + self.txamount
+                        fiat_wallet = fiat_wallet - amount_check
+                        qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
+                        cursor.execute(qry3)
+                        qry1 = f"UPDATE transactions SET txstatus = 1 WHERE txid={self.txid}"
+                        cursor.execute(qry1)
+                        qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
+                        df2 = pd.read_sql(qry4, conn)
+                        txid = df2.at[0, 'txid']
+                        qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action,commtype,commamount) VALUES ({txid},{self.cid},'{self.txdate}','{action}','{self.commtype}',{amount_check})"
+                        cursor.execute(qry2)
+                        conn.commit()
+                        cursor.close()
+                        conn.close()
+                        return "success"
+                    else:
+                        return "Error"
             if (self.txtype == 1):
-                if (btc_wallet > self.txamount):
-                    btc_wallet = btc_wallet - {self.txamount}
-                    fiat_wallet = fiat_wallet + amount
-                    qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
-                    cursor.execute(qry3)
-                    qry1 = f"UPDATE transactions SET txstatus = 1 WHERE txid={self.txid}"
-                    cursor.execute(qry1)
-                    qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
-                    df2 = pd.read_sql(qry4, conn)
-                    txid = df2.at[0, 'txid']
-                    qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action,commtype,commamount) VALUES ({txid},{self.cid},'{self.txdate}','{action}','{self.commtype}',{comm_amount})"
-                    cursor.execute(qry2)
-                    conn.commit()
-                    cursor.close()
-                    conn.close()
-                    return "success"
-                else:
-                    return "No sufficient Bitcoins to sell"
+                if(self.commtype == 'BTC'):
+                    if (client_status == 1):
+                        btc_amount_check = 0.005 * self.txamount + self.txamount
+                    if ( client_status == 0):
+                        btc_amount_check = 0.0025 * self.txamount
+                    if (btc_wallet > btc_amount_check):
+                        btc_wallet = btc_wallet - btc_amount_check
+                        fiat_wallet = fiat_wallet + btc_amount_check * self.currBTC
+                        qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
+                        cursor.execute(qry3)
+                        qry1 = f"UPDATE transactions SET txstatus = 1 WHERE txid={self.txid}"
+                        cursor.execute(qry1)
+                        qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
+                        df2 = pd.read_sql(qry4, conn)
+                        txid = df2.at[0, 'txid']
+                        qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action,commtype,commamount) VALUES ({txid},{self.cid},'{self.txdate}','{action}','{self.commtype}',{btc_amount_check})"
+                        cursor.execute(qry2)
+                        conn.commit()
+                        cursor.close()
+                        conn.close()
+                        return "success"
+                if(self.commtype == 'USD'):
+                    if (client_status == 1):
+                        amount_check_new = self.txamount
+                        amount_check_fiat_new = 0.005 * self.txamount * self.currBTC
+                    if ( client_status == 0):
+                        amount_check_new = self.txamount
+                        amount_check_fiat_new = 0.0025 * self.txamount * self.currBTC
+                    if ( btc_wallet >= amount_check_new and fiat_wallet >= amount_check_fiat_new):
+                          btc_wallet = btc_wallet - amount_check_new
+                          fiat_wallet = fiat_wallet + (self.txamount * self.currBTC) - amount_check_fiat_new
+                          qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
+                          cursor.execute(qry3)
+                          qry1 = f"UPDATE transactions SET txstatus = 1 WHERE txid={self.txid}"
+                          cursor.execute(qry1)
+                          qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
+                          df2 = pd.read_sql(qry4, conn)
+                          txid = df2.at[0, 'txid']
+                          qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action,commtype,commamount) VALUES ({txid},{self.cid},'{self.txdate}','{action}','{self.commtype}',{amount_check_fiat_new})"
+                          cursor.execute(qry2)
+                          conn.commit()
+                          cursor.close()
+                          conn.close()
+                          return "success"
+
+                    else:
+                        return "No sufficient Bitcoins to sell"
+                
+            
 
         except Exception as e:
             return f"an Error Occured {e}"
