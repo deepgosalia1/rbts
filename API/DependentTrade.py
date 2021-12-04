@@ -10,7 +10,7 @@ class DependentTrade:
 
     global id
 
-    def _init_(self, cid, txdate, txtype, txstatus, txamount, currBTC=None, commtype=None, txid=None,tid=None):
+    def __init__(self, cid, txdate, txtype, txstatus, txamount, currBTC=None, commtype=None, txid=None,tid=None):
         self.cid = cid
         self.txdate = txdate
         self.txtype = txtype

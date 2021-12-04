@@ -12,7 +12,7 @@ import Trader
 import DependentTrade
 
 # initialize flask API
-app = Flask(_name_)
+app = Flask(__name__)
 api = CORS(app)
 
 
@@ -252,7 +252,7 @@ def createUser(id):
     return "success"
 
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     app.run(
         debug=True,
         host="0.0.0.0",
