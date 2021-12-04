@@ -12,3 +12,13 @@
 * Azure SQL
 * React JS
 * Python3 Packages:
+  * flask
+  * 
+  
+
+## Install:
+The application first requires that Nodejs setup with a reactjs project,Python3, pip and Flask are installed.
+
+## Database:
+The application is developed on Azure tsql database,we have created a microsoft azure account and created our database table in azure transact sql.
+
