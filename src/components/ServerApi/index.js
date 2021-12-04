@@ -31,7 +31,7 @@ export const placeTraderDependentTrade = async (cid, txamount, txtype, commtype,
 };
 
 export const ApproveTrade = async (txid, btc, txtype, tid, commtype, cid, txdate, txamount) => {
-  return await callApi({ endpoint: 'transactions/approveTrade', method: 'post', body: { txid, currBTC: btc, txtype, tid, commtype, cid } })
+  return await callApi({ endpoint: 'transactions/approveTrade', method: 'post', body: { txid, currBTC: btc, txtype, tid, commtype, cid, txdate, txamount } })
 };
 
 export const RejectTrade = async (txid, txtype, tid, cid, txdate, txamount) => {
