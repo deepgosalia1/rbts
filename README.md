@@ -14,6 +14,8 @@
 * Python3 Packages:
   * flask
   * pyodbc
+  * request
+  * jsonify
   
 
 ## Install:
