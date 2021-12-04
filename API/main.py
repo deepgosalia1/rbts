@@ -9,6 +9,7 @@ import Transaction
 import Client
 import Cancellations
 import Trader
+import DependentTrade
 
 # initialize flask API
 app = Flask(__name__)
@@ -129,7 +130,6 @@ def client_place_buyOrders():
 @app.route("/client/dependentTrade", methods=['POST', 'GET'])
 def client_place_traderTrade():
     data = request.get_json(force=True)
-    # cid, txamount, txtype, commtype, txdate, currBTC
     txamount = data['txamount']
     txtype = data['txtype']
     txstatus = 0  # approved since indepenedent order
@@ -139,7 +139,10 @@ def client_place_traderTrade():
     currBTC = data['currBTC']
     print(data)
     # txn = ClientBuy.ClientBuy(cid, txdate, txtype, txstatus, txamount, currBTC)
-    return ""
+    txn = DependentTrade.DependentTrade(
+        cid, txdate, txtype, txstatus, txamount, currBTC, commtype)
+    place_trade = txn.place_order()
+    return place_trade
 
 ######TRANSACTION APIS#######
 
@@ -151,6 +154,8 @@ def ApproveTrade():
     txid = data['txid']
     currBTC = data['currBTC']
     txtype = data['txtype']
+    tid = data['tid']
+    commtype = data['commtype']
     # pending api
     return ''
 
@@ -182,13 +187,14 @@ def placeTopUpRequest():
 def ApproveTopUp():
     data = request.get_json(force=True)
     txid = data['txid']
-    txtype = data['txtype']
+    txtype = None
     fiatamount = data['fiatamount']
     txstatus = 1
     cid = data['cid']
     txdate = data['txdate']
+    tid = data['tid']
     txn = Transaction.Transaction(
-        cid, txdate, txtype, txstatus, fiatamount=fiatamount, txid=txid)
+        cid, txdate, txtype, txstatus, fiatamount=fiatamount, tid=tid, txid=txid)
     return txn.approvetopup()
 
 
@@ -196,13 +202,13 @@ def ApproveTopUp():
 def RejectTopUp():
     data = request.get_json(force=True)
     txid = data['txid']
-    txtype = data['txtype']
+    txtype = None
     txstatus = 2
     cid = data['cid']
     txdate = data['txdate']
-    fiatamount = data['fiatamount']
+    tid = data['tid']
     txn = Transaction.Transaction(
-        cid, txdate, txtype, txstatus, fiatamount=fiatamount, txid=txid)
+        cid, txdate, txtype, txstatus, tid=tid, txid=txid)
     return txn.rejecttopup()
 
 

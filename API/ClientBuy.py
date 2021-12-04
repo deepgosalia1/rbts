@@ -5,14 +5,8 @@ import pandas as pd
 class ClientBuy:
 
     global id
-    # date = GETDATE()
 
-    # // for clients only
-    # //Transaction REQUEST from client to buy 50 BTC
-    # //insert into transactions (cid, txdate, txtype, txstatus, txamount) values (1, date, 0,0, 50);
-    # //insert into logs (cid, txid, time) values (1, txid, date);
-
-    def _init_(self, cid, txdate, txtype, txstatus, txamount, currBTC):
+    def __init__(self, cid, txdate, txtype, txstatus, txamount, currBTC):
         self.cid = cid
         self.txdate = txdate
         self.txtype = txtype
@@ -34,20 +28,23 @@ class ClientBuy:
             # fiat wallet
             fiat_wallet = c['fiatwallet'][0]
             print("fiat", fiat_wallet)
-            amount = {self.txamount} * {self.btc_amount}
-            if ({self.txtype} == 0):
+            amount = self.txamount * self.btc_amount
+            if (self.txtype == 0):
+
                 if (fiat_wallet > amount):
                     fiat_wallet = fiat_wallet - amount
-                    btc_wallet = btc_wallet + {self.txamount}
-                    qry3 = f"UPDATE [dbo].[client] SET btcwallet=btc_wallet,fiatwallet=fiat_wallet WHERE cid = {self.cid}"
+                    btc_wallet = btc_wallet + self.txamount
+                    qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
                     cursor.execute(qry3)
-                    qry1 = f"INSERT INTO [dbo].[transactions](cid, txdate, txtype, txstatus, txamount) VALUES ({self.cid},'{self.txdate}','{self.txtype}','{self.txstatus}','{self.txamount}')"
+                    print('tetinggg')
+                    qry1 = f"INSERT INTO [dbo].[transactions](cid, txdate, txtype, txstatus, txamount) VALUES ({self.cid},'{self.txdate}',{self.txtype},{self.txstatus},{self.txamount})"
                     cursor.execute(qry1)
                     qry2 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
                     df2 = pd.read_sql(qry2, conn)
                     txid = df2.at[0, 'txid']
                     qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({txid},{self.cid},'{self.txdate}','1')"
                     cursor.execute(qry2)
+                    print('qry2', qry1)
                     conn.commit()
                     cursor.close()
                     conn.close()
@@ -56,11 +53,11 @@ class ClientBuy:
                     return "No sufficient Balance to execute buy request"
             if (self.txtype == 1):
                 if (btc_wallet > self.txamount):
-                    btc_wallet = btc_wallet - {self.txamount}
+                    btc_wallet = btc_wallet - self.txamount
                     fiat_wallet = fiat_wallet + amount
-                    qry3 = f"UPDATE [dbo].[client] SET btcwallet=btc_wallet,fiatwallet=fiat_wallet WHERE cid = {self.cid}"
+                    qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
                     cursor.execute(qry3)
-                    qry1 = f"INSERT INTO [dbo].[transactions](cid, txdate, txtype, txstatus, txamount) VALUES ({self.cid},'{self.txdate}','{self.txtype}','{self.txstatus}','{self.txamount}')"
+                    qry1 = f"INSERT INTO [dbo].[transactions](cid, txdate, txtype, txstatus, txamount) VALUES ({self.cid},'{self.txdate}',{self.txtype},{self.txstatus},{self.txamount})"
                     cursor.execute(qry1)
                     qry2 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
                     df2 = pd.read_sql(qry2, conn)

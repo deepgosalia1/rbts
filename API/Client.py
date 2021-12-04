@@ -13,7 +13,7 @@ class Client:
 
     def get_transactions(self):
         conn = cg.connect_to_azure()
-        qry = f"SELECT * FROM [dbo].[transactions] WHERE cid={self.cid}"
+        qry = f"SELECT * FROM [dbo].[transactions] WHERE cid={self.cid} ORDER BY txid ASC;"
         df = pd.read_sql(qry, conn)
         json_user_data = df.to_json(orient="index")
         parsed_json = json.loads(json_user_data)

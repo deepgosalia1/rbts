@@ -88,13 +88,13 @@ const ApprovalList = (props) => {
                         <IconButton aria-label="delete" onClick={async () => {
                             // state Update with filter to remove the clicked row
                             if (params.row.txtype === 2) {
-                                await ApproveTopupRequet(params.row.txid, params.row.cid, params.row.fiatamount, params.row.txdate).then(() => {
+                                await ApproveTopupRequet(params.row.txid, params.row.cid, params.row.fiatamount, formatDate(new Date(params.row.txdate)), traderData.userid).then(() => {
                                     setResultList(prev => prev.filter(p => p.id != params.row.id))
 
                                 })
                             } else {
                                 // place the approval Buy/Sell api here
-                                await ApproveTrade(params.row.txid, btc, params.row.txtype).then(() => {
+                                await ApproveTrade(params.row.txid, btc, params.row.txtype, traderData.userid, params.row.commtype).then(() => {
                                     setResultList(prev => prev.filter(p => p.id != params.row.id))
                                 })
                             }
@@ -104,13 +104,13 @@ const ApprovalList = (props) => {
                         <IconButton aria-label="delete" onClick={async () => {
                             // state Update with filter to remove the clicked row
                             if (params.row.txtype === 2) {
-                                RejectTopup(params.row.txid, params.row.cid, params.row.txdate).then(() => {
+                                RejectTopup(params.row.txid, params.row.cid, formatDate(new Date(params.row.txdate)), traderData.userid).then(() => {
                                     setResultList(prev => prev.filter(p => p.id != params.row.id))
 
                                 })
                             } else {
                                 // place the rejected Buy/Sell api here
-                                await RejectTrade(params.row.txid, params.row.txtype).then(() => {
+                                await RejectTrade(params.row.txid, params.row.txtype, traderData.userid).then(() => {
                                     setResultList(prev => prev.filter(p => p.id != params.row.id))
                                 })
                             }

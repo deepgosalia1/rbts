@@ -22,36 +22,36 @@ export const getClientTransactions = async (id) => {
   return await callApi({ endpoint: 'client/transactions', method: 'post', body: { cid: id } })
 };
 
-export const placeIndependentTrade = async (cid, txamount, txtype, txdate, currBTCPriceinUSD) => {
-  return await callApi({ endpoint: 'client/independentTrade', method: 'post', body: { cid, txamount, txtype, txdate, currBTC: currBTCPriceinUSD } })
+export const placeIndependentTrade = async (cid, txamount, txtype, txdate, currBTCPriceinUSD, commtype) => {
+  return await callApi({ endpoint: 'client/independentTrade', method: 'post', body: { cid, txamount, txtype, txdate, currBTC: currBTCPriceinUSD, commtype } })
 };
 
 export const placeTraderDependentTrade = async (cid, txamount, txtype, commtype, txdate, currBTCPriceinUSD) => {
   return await callApi({ endpoint: 'client/dependentTrade', method: 'post', body: { cid, txamount, txtype, commtype, txdate, currBTC: currBTCPriceinUSD } })
 };
 
+export const ApproveTrade = async (txid, currBTC, txtype, tid, commtype) => {
+  return await callApi({ endpoint: 'transactions/approveTrade', method: 'post', body: { txid, currBTC, txtype, tid, commtype } })
+};
+
+export const RejectTrade = async (txid, txtype, tid) => {
+  return await callApi({ endpoint: 'transactions/rejectTrade', method: 'post', body: { txid, txtype, tid } })
+};
+
 export const placeTopUpRequest = async (cid, fiatamount, txdate) => {
   return await callApi({ endpoint: 'transactions/topup', method: 'post', body: { cid, fiatamount, txtype: 2, txdate } })
 };
 
-export const ApproveTopupRequet = async (txid, cid, fiatamount, txdate) => {
-  return await callApi({ endpoint: 'transactions/approveTopup', method: 'post', body: { txid, cid, fiatamount, txdate } })
+export const ApproveTopupRequet = async (txid, cid, fiatamount, txdate, tid) => {
+  return await callApi({ endpoint: 'transactions/approveTopup', method: 'post', body: { txid, cid, fiatamount, txdate, tid } })
 };
 
-export const RejectTopup = async (txid, cid, txdate) => {
-  return await callApi({ endpoint: 'transactions/rejectTopup', method: 'post', body: { txid, cid, txdate } })
+export const RejectTopup = async (txid, cid, txdate, tid) => {
+  return await callApi({ endpoint: 'transactions/rejecttopup', method: 'post', body: { txid, cid, txdate, tid } })
 };
 
 export const getPendingTransactions = async () => {
   return await callApi({ endpoint: 'trader/getPendingTransactions', method: 'get' })
-};
-
-export const ApproveTrade = async (txid, currBTC, txtype) => {
-  return await callApi({ endpoint: 'transactions/approveTrade', method: 'post', body: { txid, currBTC, txtype } })
-};
-
-export const RejectTrade = async (txid, txtype) => {
-  return await callApi({ endpoint: 'transactions/rejectTrade', method: 'post', body: { txid, txtype } })
 };
 
 export const getDailyData = async (start_date, end_date) => {

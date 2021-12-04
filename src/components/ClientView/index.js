@@ -3,12 +3,7 @@ import { Grid, Input, MenuItem, MenuList, TextField } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import { Box, Text } from 'grommet';
 import { getBTCPrice, getClientTransactions } from '../ServerApi';
-import styled from 'styled-components';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import TradingPage from '../TradingPage';
-import SearchPage from '../SearchPage';
-import ApprovalList from '../ApprovalList';
 import ListPage from '../ListPage';
 
 const styles = {
@@ -32,11 +27,15 @@ const ClientView = (props) => {
         if (clientData.userid !== undefined) getTransactions()
     }, [clientData.userid])
 
+    const updateTxn = async () => {
+        await getTransactions()
+    }
+
     return (
         <Grid container flex flexDirection={'column'}>
             <Grid container flex flexDirection={'row'}>
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    <TradingPage logout={props.logout} traderView={false} userData={clientData} />
+                    <TradingPage logout={props.logout} traderView={false} userData={clientData} updateTxn={updateTxn} />
                 </Grid>
             </Grid>
             <Grid container flex flexDirection={'row'}>

@@ -129,7 +129,7 @@ const ListPage = (props) => {
                 let cellValue = params.row.txstatus
                 // console.log(cellValue, params)
                 return (
-                    `${cellValue === 'approved' ? 'Approved' : cellValue === 'rejected' ? 'Rejected' : 'Pending'}`
+                    `${cellValue === 1 ? 'Approved' : cellValue !== 0 ? 'Rejected' : 'Pending'}`
                 )
             }
             ,

@@ -29,10 +29,10 @@ const styles = {
 };
 const TradeOptions = ['Buy', 'Sell'];
 const traderOptions = ['Independent', 'Trader'];
-const commissionOptions = ['BTC', 'FIAT']
+const commissionOptions = ['BTC', 'USD']
 
 function TradingView(props) {
-    const { traderView = false, userData } = props
+    const { traderView = false, userData, updateTxn = undefined } = props
     const [btc, setBTC] = useState(64646)
     const [amount, setAmount] = useState(0)
     const [snackMessage, setSnackMessage] = useState('')
@@ -74,6 +74,7 @@ function TradingView(props) {
             ).then(() => {
                 setSnack(true)
                 setSnackMessage('Transaction Confirmed.')
+                if (updateTxn) updateTxn()
             }).catch((e) => {
                 setSnack(true)
                 setSnackMessage('Transaction couldnt be placed.')
@@ -86,10 +87,12 @@ function TradingView(props) {
                 commSelectedIndex,
                 tradeSelectedIndex,
                 formatDate(new Date()),
-                btc
+                btc,
+                commissionOptions[commSelectedIndex]
             ).then(() => {
                 setSnack(true)
                 setSnackMessage('Transaction Placed.')
+                if (updateTxn) updateTxn()
             }).catch((e) => {
                 setSnack(true)
                 setSnackMessage('Transaction couldnt be placed.')

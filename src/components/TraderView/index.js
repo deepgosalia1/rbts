@@ -51,7 +51,7 @@ const TraderView = (props) => {
                     <ListPage Header={'Recent Transactions'} showHeader transactions={transactions} />
                 </Grid>
                 <Grid item flex style={{ display: 'flex', flex: 1, border: '1px solid brown' }}>
-                    {btc && <ApprovalList traderData={traderData} currBTC={btc} />}
+                    {btc && traderData && <ApprovalList traderData={traderData} currBTC={btc} />}
                 </Grid>
             </Grid>
         </Grid>

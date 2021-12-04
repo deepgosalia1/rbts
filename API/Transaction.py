@@ -5,6 +5,7 @@ from pandas.core.dtypes.missing import notnull
 import config as cg
 from pandas.io import json
 
+
 class Transaction:
 
     global id
@@ -37,7 +38,7 @@ class Transaction:
         action = 'Pending' if self.txstatus == 0 else 'Approved' if self.txstatus == 1 else 'Rejected'
         try:
             cursor = conn.cursor()
-            qry1 = f"INSERT INTO [dbo].[transactions](cid, txdate, txtype, txstatus, txamount) VALUES ({self.cid},'{self.txdate}','{self.txtype}','{self.txstatus}','{self.txamount}')"
+            qry1 = f"INSERT INTO [dbo].[transactions](cid, txdate, txtype, txstatus, txamount) VALUES ({self.cid},'{self.txdate}',{self.txtype},{self.txstatus},{self.txamount})"
             c = cursor.execute(qry1)
             qry2 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
             df2 = pd.read_sql(qry2, conn)
@@ -68,7 +69,7 @@ class Transaction:
             df2 = pd.read_sql(qry2, conn)
             txid = df2.at[0, 'txid']
             print('df2:', df2, '\n', 'txid', txid)
-            qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({txid},{self.cid},'{self.txdate}','{action}')"
+            qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({int(txid)},{self.cid},'{self.txdate}','{action}')"
             cursor.execute(qry2)
             conn.commit()
             cursor.close()
@@ -79,6 +80,7 @@ class Transaction:
             # user_type = cursor.fetchone()
             return "success"
         except Exception as e:
+            print(e)
             return f"an Error Occured {e}"
 
     def approvetopup(self):
@@ -86,12 +88,19 @@ class Transaction:
         action = 'Approved'
         try:
             cursor = conn.cursor()
-            qry0 = f"UPDATE transactions SET txstatus = 1 WHERE txid={self.txid}"
-            qry = f"UPDATE client SET fiatwallet = fiatwallet + {self.fiatwallet} WHERE cid={self.cid}"
-            qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({self.txid},{self.cid},'{self.txdate}','{action}')"
+            qry0 = f"UPDATE transactions SET txstatus = 1, tid = {self.tid} WHERE txid={self.txid}"
             cursor.execute(qry0)
+            clientDataFetch = f"SELECT fiatwallet FROM client WHERE cid={self.cid}"
+            df2 = pd.read_sql(clientDataFetch, conn)
+            fiatamount = df2.at[0, 'fiatwallet']
+            print('hhihihihihihihi')
+            fiatamount = int(fiatamount) + self.fiatamount
+            qry = f"UPDATE client SET fiatwallet = {fiatamount} WHERE cid={self.cid}"
             cursor.execute(qry)
+            print('hhihihihihihihi222222')
+            qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({int(self.txid)},{self.cid},'{self.txdate}','{action}')"
             cursor.execute(qry2)
+            print('hhihihihihihihi33333333')
             conn.commit()
             cursor.close()
             conn.close()
@@ -99,6 +108,7 @@ class Transaction:
             # parsed_json = json.loads(json_user_data)
             return "success"
         except Exception as e:
+            print(e)
             return f"an Error Occured {e}"
 
     def rejecttopup(self):
@@ -106,10 +116,12 @@ class Transaction:
         action = 'Rejected'
         try:
             cursor = conn.cursor()
-            qry = f"UPDATE transactions SET txstatus = 2 WHERE txid={self.txid}"
-            qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({self.txid},{self.cid},'{self.txdate}','{action}')"
+            qry = f"UPDATE transactions SET txstatus = 2, tid = {self.tid} WHERE txid={self.txid}"
             cursor.execute(qry)
+            qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({self.txid},{self.cid},'{self.txdate}','{action}')"
             cursor.execute(qry2)
+            qry3 = f"INSERT INTO [dbo].[cancellations](txid) VALUES ({self.txid})"
+            cursor.execute(qry3)
             conn.commit()
             cursor.close()
             conn.close()
