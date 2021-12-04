@@ -95,7 +95,7 @@ const ApprovalList = (props) => {
                             } else {
                                 // place the approval Buy/Sell api here
                                 console.log(params.row.txid, currBTC, params.row.txtype, traderData.userid, params.row.commtype, params.row.cid, formatDate(params.row.txdate), params.row.txamount)
-                                await ApproveTrade(params.row.txid, btc, params.row.txtype, traderData.userid, params.row.commtype, params.row.cid, formatDate(params.row.txdate), params.row.txamount).then(() => {
+                                await ApproveTrade(params.row.txid, currBTC, params.row.txtype, traderData.userid, params.row.commtype, params.row.cid, formatDate(params.row.txdate), params.row.txamount).then(() => {
                                     setResultList(prev => prev.filter(p => p.id != params.row.id))
                                 })
                             }
