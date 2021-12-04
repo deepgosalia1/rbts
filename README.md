@@ -13,7 +13,7 @@
 * React JS
 * Python3 Packages:
   * flask
-  * 
+  * pyodbc
   
 
 ## Install:
