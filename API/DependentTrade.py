@@ -57,6 +57,7 @@ class DependentTrade:
             print("fiat", fiat_wallet)
             client_status = c['clientstatus'][0]
             print("clientstatus", client_status)
+            amount = self.txamount*self.currBTC
             if (self.txtype == 0):
                 if(self.commtype == 'BTC'):
                     if (client_status == 1):
@@ -65,17 +66,19 @@ class DependentTrade:
                     if ( client_status == 0):
                         btc_amount_check = 0.0025 * self.txamount
                         amount_check_fiat = self.txamount * self.currBTC
+                        print("BTC",btc_amount_check)
+                        print("FIAT",amount_check_fiat)
                     if (btc_wallet >= btc_amount_check and fiat_wallet >= amount_check_fiat):
                         btc_wallet = btc_wallet + self.txamount
                         fiat_wallet = fiat_wallet - amount_check_fiat
                         qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
                         cursor.execute(qry3)
-                        qry1 = f"UPDATE transactions SET txstatus = 1 WHERE txid={self.txid}"
+                        qry1 = f"UPDATE transactions SET txstatus = 1,tid = {self.tid} WHERE txid={self.txid}"
                         cursor.execute(qry1)
                         qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
                         df2 = pd.read_sql(qry4, conn)
                         txid = df2.at[0, 'txid']
-                        qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action,commtype,commamount) VALUES ({txid},{self.cid},'{self.txdate}','{action}','{self.commtype}',{btc_amount_check})"
+                        qry2 = f"INSERT INTO [dbo].[log](txid,tid, cid, time, action) VALUES ({txid},{self.tid},{self.cid},'{self.txdate}','{action}')"
                         cursor.execute(qry2)
                         conn.commit()
                         cursor.close()
@@ -93,12 +96,12 @@ class DependentTrade:
                         fiat_wallet = fiat_wallet - amount_check
                         qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
                         cursor.execute(qry3)
-                        qry1 = f"UPDATE transactions SET txstatus = 1 WHERE txid={self.txid}"
+                        qry1 = f"UPDATE transactions SET txstatus = 1,tid = {self.tid} WHERE txid={self.txid}"
                         cursor.execute(qry1)
                         qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
                         df2 = pd.read_sql(qry4, conn)
                         txid = df2.at[0, 'txid']
-                        qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action,commtype,commamount) VALUES ({txid},{self.cid},'{self.txdate}','{action}','{self.commtype}',{amount_check})"
+                        qry2 = f"INSERT INTO [dbo].[log](txid,tid, cid, time, action) VALUES ({txid},{self.tid},{self.cid},'{self.txdate}','{action}')"
                         cursor.execute(qry2)
                         conn.commit()
                         cursor.close()
@@ -117,12 +120,12 @@ class DependentTrade:
                         fiat_wallet = fiat_wallet + btc_amount_check * self.currBTC
                         qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
                         cursor.execute(qry3)
-                        qry1 = f"UPDATE transactions SET txstatus = 1 WHERE txid={self.txid}"
+                        qry1 = f"UPDATE transactions SET txstatus = 1,tid = {self.tid} WHERE txid={self.txid}"
                         cursor.execute(qry1)
                         qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
                         df2 = pd.read_sql(qry4, conn)
                         txid = df2.at[0, 'txid']
-                        qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action,commtype,commamount) VALUES ({txid},{self.cid},'{self.txdate}','{action}','{self.commtype}',{btc_amount_check})"
+                        qry2 = f"INSERT INTO [dbo].[log](txid, tid, cid, time, action) VALUES ({txid},{self.tid},{self.cid},'{self.txdate}','{action}')"
                         cursor.execute(qry2)
                         conn.commit()
                         cursor.close()
@@ -140,12 +143,12 @@ class DependentTrade:
                           fiat_wallet = fiat_wallet + (self.txamount * self.currBTC) - amount_check_fiat_new
                           qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
                           cursor.execute(qry3)
-                          qry1 = f"UPDATE transactions SET txstatus = 1 WHERE txid={self.txid}"
+                          qry1 = f"UPDATE transactions SET txstatus = 1,tid = {self.tid} WHERE txid={self.txid}"
                           cursor.execute(qry1)
                           qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
                           df2 = pd.read_sql(qry4, conn)
                           txid = df2.at[0, 'txid']
-                          qry2 = f"INSERT INTO [dbo].[log](txid, cid, time, action,commtype,commamount) VALUES ({txid},{self.cid},'{self.txdate}','{action}','{self.commtype}',{amount_check_fiat_new})"
+                          qry2 = f"INSERT INTO [dbo].[log](txid,tid, cid, time, action) VALUES ({txid},{self.tid},{self.cid},'{self.txdate}','{action}')"
                           cursor.execute(qry2)
                           conn.commit()
                           cursor.close()
@@ -165,17 +168,15 @@ class DependentTrade:
         action = 'Rejected'
         try:
             cursor = conn.cursor()
-            qry1 = f"UPDATE transactions SET txstatus = 2 WHERE txid={self.txid}"
-            cursor.execute(qry1)
-            qry3 = f"INSERT INTO [dbo].[cancellations](txid) VALUES({self.txid})"
-            cursor.execute(qry3)
+            qry = f"UPDATE transactions SET txstatus = 2, tid = {self.tid} WHERE txid={self.txid}"
+            cursor.execute(qry)
             qry2 = f"SELECT TOP 1 * FROM cancellations ORDER BY txid DESC"
             df2 = pd.read_sql(qry2, conn)
             canid = df2.at[0, 'canid']
             print('df2:', df2, '\n', 'caind', canid)
-            qry2 = f"INSERT INTO [dbo].[cancellations](canid,txid) VALUES ({int(canid)},{self.txid})"
+            qry2 = f"INSERT INTO [dbo].[cancellations](txid) VALUES ({self.txid})"
             cursor.execute(qry2)
-            qry4 = f"INSERT INTO [dbo].[log](txid, cid, time, action) VALUES ({self.txid},{self.cid},'{self.txdate}','{action}')"
+            qry4 = f"INSERT INTO [dbo].[log](txid,tid, cid, time, action) VALUES ({self.txid},{self.tid},{self.cid},'{self.txdate}','{action}')"
             cursor.execute(qry4)
             conn.commit()
             cursor.close()
