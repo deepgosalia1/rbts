@@ -106,3 +106,12 @@ CREATE TABLE cancellations
 ;
 
 
+#Drop Table queries
+
+DROP TABLE users;
+DROP TABLE transactions;
+DROP TABLE log;
+DROP TABLE client;
+DROP TABLE trader;
+DROP TABLE manager;
+DROP TABLE cancellations;
