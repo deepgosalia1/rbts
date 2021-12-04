@@ -1,0 +1,108 @@
+sql project queries
+
+CREATE TABLE users 
+   (
+		userid int identity(1,1),
+		username nvarchar(30) not null,
+		pass_hash nvarchar(100) not null,
+		type nvarchar(10) not null,
+		CONSTRAINT PK_users PRIMARY KEY NONCLUSTERED (userid),
+		)
+;
+
+
+CREATE TABLE transactions 
+   (
+		txid int identity(1,1),
+		cid int not null,
+		tid int,
+		txdate datetime not null,
+		txtype int,
+		txstatus int,
+		commamount float,
+		commtype nvarchar(3),
+		btcamount float,
+		fiatamount float,
+		txamount float,
+		CONSTRAINT PK_transactions PRIMARY KEY NONCLUSTERED (txid)
+      )
+;
+
+CREATE TABLE log 
+   (
+		lid int identity(1,1),
+		cid int not null,
+		txid int not null,
+		time datetime not null,
+		tid int not null
+      , CONSTRAINT PK_log PRIMARY KEY NONCLUSTERED (lid)
+      , CONSTRAINT FK_log FOREIGN KEY (txid)
+        REFERENCES [dbo].[transactions] (txid)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+   )
+;
+
+CREATE TABLE client 
+   (
+		cid int,
+		email nvarchar(50) not null,
+		btcwallet float,
+		fiatwallet float,
+		phone bigint,
+		fname nvarchar(15),
+		lname nvarchar(15),
+		clientstatus int,
+		clientstreet nvarchar(50),
+		clientzip nvarchar(10),
+		clientstate nvarchar(50),
+		clientcountry nvarchar(40),
+		CONSTRAINT PK_client PRIMARY KEY NONCLUSTERED (cid),
+		CONSTRAINT FK_client FOREIGN KEY (cid)
+        REFERENCES [dbo].[users] (userid)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+      )
+;
+
+
+CREATE TABLE trader 
+   (
+		tid int,
+		fname nvarchar(15),
+		lname nvarchar(15),
+		CONSTRAINT PK_trader PRIMARY KEY NONCLUSTERED (tid),
+		CONSTRAINT FK_trader FOREIGN KEY (tid)
+        REFERENCES [dbo].[users] (userid)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+      )
+;
+
+CREATE TABLE manager 
+   (
+		mid int,
+		fname nvarchar(15),
+		lname nvarchar(15),
+		CONSTRAINT PK_manager PRIMARY KEY NONCLUSTERED (mid),
+		CONSTRAINT FK_manager FOREIGN KEY (mid)
+        REFERENCES [dbo].[users] (userid)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+      )
+;
+
+
+CREATE TABLE cancellations 
+   (
+		canid int identity(1,1),
+		txid int,
+		CONSTRAINT PK_cancellations PRIMARY KEY NONCLUSTERED (canid),
+		CONSTRAINT FK_cancellations FOREIGN KEY (txid)
+        REFERENCES [dbo].[transactions] (txid)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+      )
+;
+
+
