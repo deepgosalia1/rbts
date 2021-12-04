@@ -20,7 +20,7 @@ const styles = {
 };
 
 const ApprovalList = (props) => {
-    const { Header = 'Needs Approval', showSearch = false, showHeader = true, traderData, btc } = props
+    const { Header = 'Needs Approval', showSearch = false, showHeader = true, traderData, currBTC } = props
     const [resultList, setResultList] = useState([])
 
     const loadPendingTransactions = async () => {
@@ -94,6 +94,7 @@ const ApprovalList = (props) => {
                                 })
                             } else {
                                 // place the approval Buy/Sell api here
+                                console.log(params.row.txid, currBTC, params.row.txtype, traderData.userid, params.row.commtype, params.row.cid, formatDate(params.row.txdate), params.row.txamount)
                                 await ApproveTrade(params.row.txid, btc, params.row.txtype, traderData.userid, params.row.commtype, params.row.cid, formatDate(params.row.txdate), params.row.txamount).then(() => {
                                     setResultList(prev => prev.filter(p => p.id != params.row.id))
                                 })

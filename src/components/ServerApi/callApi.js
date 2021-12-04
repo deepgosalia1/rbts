@@ -6,7 +6,7 @@ export async function callApi({ endpoint, method = 'get', body = undefined, full
     if (fullUrl) {
         url = endpoint;
     } else {
-        url = `http://192.168.1.152:4000/${endpoint}`;
+        url = `http://192.168.1.149:4000/${endpoint}`;
     }
     // console.log('body', body)
     return await fetch(url, { method, body: JSON.stringify(body) })
