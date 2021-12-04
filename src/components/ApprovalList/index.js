@@ -94,7 +94,7 @@ const ApprovalList = (props) => {
                                 })
                             } else {
                                 // place the approval Buy/Sell api here
-                                await ApproveTrade(params.row.txid, btc, params.row.txtype, traderData.userid, params.row.commtype).then(() => {
+                                await ApproveTrade(params.row.txid, btc, params.row.txtype, traderData.userid, params.row.commtype, params.row.cid).then(() => {
                                     setResultList(prev => prev.filter(p => p.id != params.row.id))
                                 })
                             }
@@ -110,7 +110,7 @@ const ApprovalList = (props) => {
                                 })
                             } else {
                                 // place the rejected Buy/Sell api here
-                                await RejectTrade(params.row.txid, params.row.txtype, traderData.userid).then(() => {
+                                await RejectTrade(params.row.txid, params.row.txtype, traderData.userid, params.row.cid).then(() => {
                                     setResultList(prev => prev.filter(p => p.id != params.row.id))
                                 })
                             }
