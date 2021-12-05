@@ -140,7 +140,8 @@ class DependentTrade:
                         amount_check_new = self.txamount
                         amount_check_fiat_new = 0.0025 * self.txamount * self.currBTC
                         print("FIATW",amount_check_fiat_new)
-                        print("BTCW",amount_check_new)
+                        print("BTCW",amount_check_new
+                        )
                     if ( btc_wallet >= amount_check_new and fiat_wallet >= amount_check_fiat_new):
                           btc_wallet = btc_wallet - amount_check_new
                           fiat_wallet = fiat_wallet + (self.txamount * self.currBTC) - amount_check_fiat_new
