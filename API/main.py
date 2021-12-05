@@ -151,11 +151,16 @@ def client_place_traderTrade():
 def ApproveTrade():
     # will only APPROVE either BUY or SELL trade (not topup/recharge)
     data = request.get_json(force=True)
+    print(data)
     txid = data['txid']
     currBTC = data['currBTC']
     txtype = data['txtype']
     tid = data['tid']
     commtype = data['commtype']
+    if commtype == '0':
+        commtype = 'BTC'
+    else:
+        commtype ='USD'
     cid = data['cid']
     txdate = data['txdate']
     txamount = data['txamount']
@@ -176,6 +181,7 @@ def RejectTrade():
     txdate = data['txdate']
     tid = data['tid']
     reject_trade = DependentTrade.DependentTrade(cid,txdate,txtype,txstatus,txamount,txid=txid,tid=tid)
+    print("REJECT",reject_trade.rejecttrade())
     return reject_trade.rejecttrade()
 
 
