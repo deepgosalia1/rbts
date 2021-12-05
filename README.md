@@ -15,7 +15,7 @@
   * flask,flask-cors
   * pyodbc
   * pandas
-  * jasonify from flask
+  * jsonify from flask
   
 
 ## Install:
