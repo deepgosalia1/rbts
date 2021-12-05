@@ -159,7 +159,7 @@ def ApproveTrade():
     commtype = data['commtype']
     if commtype == '0':
         commtype = 'BTC'
-    else:
+    elif commtype == '1':
         commtype ='USD'
     cid = data['cid']
     txdate = data['txdate']
