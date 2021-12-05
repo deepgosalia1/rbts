@@ -12,6 +12,7 @@ export async function callApi({ endpoint, method = 'get', body = undefined, full
     return await fetch(url, { method, body: JSON.stringify(body) })
         .then(async (response) => {
             if (!response.ok) {
+                alert('An error Occured. Please verify the inputs/operation you are trying to perform.')
                 return response.json()
                     .then((json) => {
                         return Promise.reject(json)
