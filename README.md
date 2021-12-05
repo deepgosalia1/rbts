@@ -14,8 +14,8 @@
 * Python3 Packages:
   * flask,flask-cors
   * pyodbc
-  * request
-  * jsonify
+  * pandas
+  * jasonify from flask
   
 
 ## Install:
