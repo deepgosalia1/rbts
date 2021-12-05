@@ -73,7 +73,11 @@ class DependentTrade:
                         fiat_wallet = fiat_wallet - amount_check_fiat
                         qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
                         cursor.execute(qry3)
+<<<<<<< HEAD
                         qry1 = f"UPDATE transactions SET txstatus = 1,tid = {self.tid},commamount = {btc_amount_check} WHERE txid={self.txid}"
+=======
+                        qry1 = f"UPDATE transactions SET txstatus = 1,tid = {self.tid}, commamount = {float(btc_amount_check)} WHERE txid={self.txid}"
+>>>>>>> 7368d8995d633abfce4c6039af625d0340be4460
                         cursor.execute(qry1)
                         qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
                         df2 = pd.read_sql(qry4, conn)
@@ -96,7 +100,11 @@ class DependentTrade:
                         fiat_wallet = fiat_wallet - amount_check
                         qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
                         cursor.execute(qry3)
+<<<<<<< HEAD
                         qry1 = f"UPDATE transactions SET txstatus = 1,tid = {self.tid},commamount = {amount_check} WHERE txid={self.txid}"
+=======
+                        qry1 = f"UPDATE transactions SET txstatus = 1,tid = {self.tid},commamount = {float(amount_check)} WHERE txid={self.txid}"
+>>>>>>> 7368d8995d633abfce4c6039af625d0340be4460
                         cursor.execute(qry1)
                         qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
                         df2 = pd.read_sql(qry4, conn)
@@ -120,7 +128,11 @@ class DependentTrade:
                         fiat_wallet = fiat_wallet + btc_amount_check * self.currBTC
                         qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
                         cursor.execute(qry3)
+<<<<<<< HEAD
                         qry1 = f"UPDATE transactions SET txstatus = 1,tid = {self.tid},commamount = {btc_amount_check} WHERE txid={self.txid}"
+=======
+                        qry1 = f"UPDATE transactions SET txstatus = 1,tid = {self.tid},commamount = {float(btc_amount_check)} WHERE txid={self.txid}"
+>>>>>>> 7368d8995d633abfce4c6039af625d0340be4460
                         cursor.execute(qry1)
                         qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
                         df2 = pd.read_sql(qry4, conn)
@@ -143,7 +155,11 @@ class DependentTrade:
                           fiat_wallet = fiat_wallet + (self.txamount * self.currBTC) - amount_check_fiat_new
                           qry3 = f"UPDATE [dbo].[client] SET btcwallet={btc_wallet},fiatwallet={fiat_wallet} WHERE cid = {self.cid}"
                           cursor.execute(qry3)
+<<<<<<< HEAD
                           qry1 = f"UPDATE transactions SET txstatus = 1,tid = {self.tid}, commamount = {amount_check_fiat_new} WHERE txid={self.txid}"
+=======
+                          qry1 = f"UPDATE transactions SET txstatus = 1,tid = {self.tid}, commamount = {float(amount_check_fiat_new)} WHERE txid={self.txid}"
+>>>>>>> 7368d8995d633abfce4c6039af625d0340be4460
                           cursor.execute(qry1)
                           qry4 = f"SELECT TOP 1 * FROM transactions ORDER BY txid DESC"
                           df2 = pd.read_sql(qry4, conn)
