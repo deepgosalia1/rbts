@@ -1,11 +1,7 @@
 import pandas as pd
 from flask import jsonify
-from pandas.core import indexing
-from pandas.core.dtypes.missing import notnull
 import config as cg
-from datetime import datetime
 from pandas.io import json
-from datetime import datetime
 
 
 class Manager:
