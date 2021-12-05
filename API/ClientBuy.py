@@ -28,7 +28,7 @@ class ClientBuy:
             # fiat wallet
             fiat_wallet = c['fiatwallet'][0]
             print("fiat", fiat_wallet)
-            amount = self.txamount * self.btc_amount
+            amount = self.txamount * self.currBTC
             if (self.txtype == 0):
 
                 if (fiat_wallet > amount):

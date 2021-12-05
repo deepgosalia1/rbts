@@ -84,8 +84,8 @@ function TradingView(props) {
             await placeTraderDependentTrade(
                 userData.userid,
                 Number(amount),
-                commSelectedIndex,
                 tradeSelectedIndex,
+                commSelectedIndex,
                 formatDate(new Date()),
                 btc,
                 commissionOptions[commSelectedIndex]
