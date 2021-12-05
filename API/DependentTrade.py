@@ -131,10 +131,10 @@ class DependentTrade:
                 if(self.commtype == 'USD'):
                     if (client_status == 1):
                         amount_check_new = self.txamount
-                        amount_check_fiat_new = 0.005 * self.txamount * self.currBTC
+                        amount_check_fiat_new = 0.008 * self.txamount * self.currBTC
                     if ( client_status == 0):
                         amount_check_new = self.txamount
-                        amount_check_fiat_new = 0.0025 * self.txamount * self.currBTC
+                        amount_check_fiat_new = 0.004 * self.txamount * self.currBTC
                         print("FIATW",amount_check_fiat_new)
                         print("BTCW",amount_check_new
                         )
