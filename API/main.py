@@ -14,6 +14,7 @@ import DependentTrade
 # initialize flask API
 app = Flask(__name__)
 api = CORS(app)
+str_job_schedule = "30 03 1 * *"
 
 
 ######LOGIN APIs#######
@@ -226,7 +227,16 @@ def RejectTopUp():
         cid, txdate, txtype, txstatus, tid=tid, txid=txid)
     return txn.rejecttopup()
 
+#!/usr/bin/env python3
+from apscheduler.schedulers.blocking import BlockingScheduler
 
+def updateClientStatus():
+    qry=f""
+    # 
+
+scheduler = BlockingScheduler()
+scheduler.add_job(updateClientStatus, 'interval', hours=730)
+scheduler.start()
 ########ADD USER APIS#######
 # /newuser/0 - client /newuser/1 - trader .../2-manager
 @app.route("/newuser/<id>", methods=['GET'])

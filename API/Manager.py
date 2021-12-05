@@ -55,7 +55,7 @@ class Manager:
                 avg = sum/cnttrans
                 date = f"{df2['txdate'][i-6]} - {df2['txdate'][i]}"
                 dfWeekly = dfWeekly.append({'txdate': date, 'min': min(lismin), 'max': max(
-                    lismax), 'avg': avg, 'count': count, 'sum': sum}, ignore_index=True)
+                    lismax), 'avg': avg, 'count': cnttrans, 'sum': sum}, ignore_index=True)
                 lismax = []
                 lismin = []
                 sum = 0
@@ -89,7 +89,7 @@ class Manager:
                 avg = sum/cnttrans
                 date = f"{df2['txdate'][i-29]} - {df2['txdate'][i]}"
                 dfMonthly = dfMonthly.append({'txdate': date, 'min': min(
-                    lismin), 'max': max(lismax), 'avg': avg, 'count': count, 'sum': sum})
+                    lismin), 'max': max(lismax), 'avg': avg, 'count': cnttrans, 'sum': sum})
                 lismax = []
                 lismin = []
                 sum = 0
