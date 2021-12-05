@@ -1,3 +1,4 @@
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import Login
@@ -10,11 +11,20 @@ import Client
 import Cancellations
 import Trader
 import DependentTrade
+# import zoneinfo
+from datetime import datetime
+# from tzlocal import get_localzone
+# tz = get_localzone()
+def updateClientStatus():
+    print('status')
+    #
 
+scheduler = BackgroundScheduler({'apscheduler.timezone': 'America/Jamaica'})
+scheduler.add_job(updateClientStatus, 'interval', hours=0.01)
+scheduler.start()
 # initialize flask API
 app = Flask(__name__)
 api = CORS(app)
-str_job_schedule = "30 03 1 * *"
 
 
 ######LOGIN APIs#######
@@ -161,12 +171,13 @@ def ApproveTrade():
     if commtype == '0':
         commtype = 'BTC'
     elif commtype == '1':
-        commtype ='USD'
+        commtype = 'USD'
     cid = data['cid']
     txdate = data['txdate']
     txamount = data['txamount']
     txstatus = 1
-    approve_trade = DependentTrade.DependentTrade(cid, txdate, txtype, txstatus,txamount,currBTC,commtype,txid=txid, tid=tid)
+    approve_trade = DependentTrade.DependentTrade(
+        cid, txdate, txtype, txstatus, txamount, currBTC, commtype, txid=txid, tid=tid)
     return approve_trade.approvetrade()
 
 
@@ -181,8 +192,9 @@ def RejectTrade():
     cid = data['cid']
     txdate = data['txdate']
     tid = data['tid']
-    reject_trade = DependentTrade.DependentTrade(cid,txdate,txtype,txstatus,txamount,txid=txid,tid=tid)
-    print("REJECT",reject_trade.rejecttrade())
+    reject_trade = DependentTrade.DependentTrade(
+        cid, txdate, txtype, txstatus, txamount, txid=txid, tid=tid)
+    print("REJECT", reject_trade.rejecttrade())
     return reject_trade.rejecttrade()
 
 
@@ -227,18 +239,12 @@ def RejectTopUp():
         cid, txdate, txtype, txstatus, tid=tid, txid=txid)
     return txn.rejecttopup()
 
+
 #!/usr/bin/env python3
-from apscheduler.schedulers.blocking import BlockingScheduler
-
-def updateClientStatus():
-    qry=f""
-    # 
-
-scheduler = BlockingScheduler()
-scheduler.add_job(updateClientStatus, 'interval', hours=730)
-scheduler.start()
 ########ADD USER APIS#######
 # /newuser/0 - client /newuser/1 - trader .../2-manager
+
+
 @app.route("/newuser/<id>", methods=['GET'])
 def createUser(id):
     data = request.get_json(force=True)
