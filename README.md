@@ -47,6 +47,9 @@
   * pyodbc
   * pandas
   * jsonify from flask
+
+## Database:
+The application is developed on Azure tsql database,we have created a microsoft azure account and created our database table in azure transact sql.
   
 
 ## Install:
@@ -57,15 +60,16 @@
 * SQL server management studio, better known as SSMS can be downloaded and installed to manage the Azure cloud database. SSMS provides querying functionality and a user friendly UI to interpret database operation.
 
 
-## Database:
-The application is developed on Azure tsql database,we have created a microsoft azure account and created our database table in azure transact sql.
-
-##Run:
+## Run:
 
 * Run the python flask by navigating into API folder in the code and using the command:-
-* py main.py
+  ```
+  py main.py
+  ```
 * Copy Paste the local ip of the machine being run in the file callApi.js line 9 and then run:-
-* npm start
+  ```
+  npm start
+  ```
 
 
 
