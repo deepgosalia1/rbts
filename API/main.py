@@ -19,7 +19,7 @@ import DependentTrade
 oManager = Manager.Manager()
 
 scheduler = BackgroundScheduler({'apscheduler.timezone': 'America/Jamaica'})
-scheduler.add_job(oManager.updateClientStatus, 'interval', hours=0.01)
+scheduler.add_job(oManager.updateClientStatus, 'interval', hours=730)
 scheduler.start()
 # initialize flask API
 app = Flask(__name__)
