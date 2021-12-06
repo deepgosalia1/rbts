@@ -1,4 +1,4 @@
-sql project queries
+
 
 CREATE TABLE users 
    (

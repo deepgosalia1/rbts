@@ -1,6 +1,8 @@
 import pandas as pd
-from flask import jsonify
+import requests
 import config as cg
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from pandas.io import json
 
 
@@ -100,3 +102,30 @@ class Manager:
         json_user_data = dfMonthly.to_json(orient="index")
         parsed_json = json.loads(json_user_data)
         return json.dumps(parsed_json)
+
+    def updateClientStatus(self):
+        currentDate = datetime.now()
+        fromDate = currentDate + relativedelta(months=-1)
+        currentDate = currentDate.strftime("%Y-%m-%d")
+        fromDate = fromDate.strftime("%Y-%m-%d")
+        try:
+            uResponse = requests.get('https://api.coindesk.com/v1/bpi/currentprice.json')
+            Jresponse = uResponse.text
+            data = json.loads(Jresponse)
+        except Exception as e:
+            print(e)
+        currBTC = data['bpi']['USD']['rate']
+        currBTC = float(currBTC.replace(',',''))
+        conn = cg.connect_to_azure()
+        cursor = conn.cursor()
+        qry2 = f"SELECT cid,SUM(txamount) as sum FROM [dbo].[transactions] WHERE txdate >=? AND txdate <=? GROUP BY cid"
+        params = (fromDate, currentDate)
+        df2 = pd.read_sql(qry2, conn, params=params)
+        for i in range(len(df2['cid'])):
+            cid = df2['cid'][i]
+            if (df2['sum'][i]* currBTC) >= 100000:
+                updqry = f"UPDATE client SET clientstatus = 1 WHERE cid={cid}"
+                cursor.execute(updqry)
+                conn.commit()
+                cursor.close()
+                conn.close()
