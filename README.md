@@ -47,6 +47,8 @@
   * pyodbc
   * pandas
   * jsonify from flask
+  * requests
+  * apscheduler
 
 ## Database:
 The application is developed on Azure tsql database,we have created a microsoft azure account and created our database table in azure transact sql.
