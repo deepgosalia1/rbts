@@ -1,10 +1,10 @@
 # Bitcoin Trading Application
 # CS 6360 Term Project
 
-* Hita Gangineni
-* Deep Dimple Gosalia
-* Bhavesh Prasad Pudi
-* Shashank Srinivas Kathavate
+* Deep Dimple Gosalia(dxg190036)
+* Hita Gangineni(hxg210013)
+* Bhavesh Prasad Pudi(bxp200022)
+* Shashank Srinivas Kathavate(ssk210005)
 
 ## Tools:
 * Python3
