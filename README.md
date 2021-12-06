@@ -56,9 +56,9 @@ The application is developed on Azure tsql database,we have created a microsoft 
 
 ## Install:
 * The application first requires that Nodejs setup with a reactjs project and Python3.
-* Using the inbuild installation tool for python Pip, we need to install the above mentioned packages. This can be done by using the python -m pip install {package}.
-* The above should be installed in a virtual environment (recommended).
-* The application must be run from the project directory.
+* Using the inbuilt installation tool for python, Pip, the above mentioned packages need to be installed. This can be done by using the python -m pip install {package}.
+* The above may be installed in a virtual environment (recommended).
+* The application API must be run from the project directory.
 * SQL server management studio, better known as SSMS can be downloaded and installed to manage the Azure cloud database. SSMS provides querying functionality and a user friendly UI to interpret database operation.
 
 
