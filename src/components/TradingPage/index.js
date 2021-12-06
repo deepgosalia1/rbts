@@ -185,7 +185,7 @@ function TradingView(props) {
                         <TradeDiv>
                             {!traderView && <DivHeader>
                                 <HeaderText
-                                >BTC Balance : {userData.btcwallet}
+                                >BTC Balance : {userData.btcwallet.toFixed(2)}
                                 </HeaderText>
                                 {!traderView ? <HeaderText>Welcome : {userData.fname}</HeaderText> : <></>}
                                 <HeaderText
@@ -197,7 +197,7 @@ function TradingView(props) {
                                         setType('W')
                                         handleShow()
                                     }}
-                                >Wallet Balance : {userData.fiatwallet}
+                                >Wallet Balance : {userData.fiatwallet.toFixed(2)}
                                 </HeaderText>
                             </DivHeader>}
                             <TradeBox>
@@ -348,7 +348,7 @@ font-weight: 400;
 font-size: 18px;
 line-height: 20px;
 color: rgba(255, 255, 255, 0.64);
-margin: 10px 0;
+margin: 10px 10px;
 display: flex;
 cursor: pointer;
 `;
