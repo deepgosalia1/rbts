@@ -4,7 +4,7 @@
 * Hita Gangineni
 * Deep Dimple Gosalia
 * Bhavesh Prasad Pudi
-* Shashank Kathavate
+* Shashank Srinivas Kathavate
 
 ## Tools:
 * Python3
