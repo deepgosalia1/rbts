@@ -1,26 +1,24 @@
-from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import Login
-import json
 import CreateUser
 import ClientBuy
 import Manager
+import pandas as pd
 import Transaction
+import config as cg
+from apscheduler.schedulers.background import BackgroundScheduler
 import Client
 import Cancellations
 import Trader
 import DependentTrade
 # import zoneinfo
-from datetime import datetime
 # from tzlocal import get_localzone
 # tz = get_localzone()
-def updateClientStatus():
-    print('status')
-    #
 
+oclient = Client.Client()
 scheduler = BackgroundScheduler({'apscheduler.timezone': 'America/Jamaica'})
-scheduler.add_job(updateClientStatus, 'interval', hours=0.01)
+scheduler.add_job(oclient.updateClientStatus(), 'interval', hours=0.01)
 scheduler.start()
 # initialize flask API
 app = Flask(__name__)
