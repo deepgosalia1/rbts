@@ -60,3 +60,12 @@
 ## Database:
 The application is developed on Azure tsql database,we have created a microsoft azure account and created our database table in azure transact sql.
 
+##Run:
+
+* Run the python flask by navigating into API folder in the code and using the command:-
+* py main.py
+* Copy Paste the local ip of the machine being run in the file callApi.js line 9 and then run:-
+* npm start
+
+
+
