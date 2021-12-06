@@ -1,7 +1,12 @@
 import fetch from 'isomorphic-fetch';
+import ip from 'local-ip-url'
+import defaultGateway from 'default-gateway'
+// import {internalIpV6, internalIpV4} from 'internal-ip';
+
 // import { HOST } from "react-dotenv"
 
 export async function callApi({ endpoint, method = 'get', body = undefined, fullUrl = false }) {
+    console.log(ip('private', 'ipv4'), await defaultGateway.v4())
     let url = ''
     if (fullUrl) {
         url = endpoint;
