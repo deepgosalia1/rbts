@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react';
 import ManagerView from './components/Manager';
 import ClientView from './components/ClientView';
 import { Button } from '@tsamantanis/react-glassmorphism'
+import ip from 'local-ip-url'
+import { getLocalIP } from './components/ServerApi';
 
 function App() {
   const [type, setType] = useState('')
@@ -15,6 +17,7 @@ function App() {
   const [userObj, setUserObj] = useState([])
 
   useEffect(() => {
+    // getLocalIP()
     console.log('hello', userObj)
   }, [userObj])
 

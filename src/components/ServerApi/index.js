@@ -1,6 +1,14 @@
 import { callApi } from './callApi';
 import sha1 from 'sha1';
 
+// export const getLocalIP = async () => {
+//   // return await callApi({ endpoint: `https://geolocation-db.com/json/`, fullUrl: true }).then((res) => {
+//   //   console.log('ipdata', res)
+//   // })
+//   fetch('https://geolocation-db.com/json/').then(response => response.json())
+//     .then(data => console.log(data));
+// }
+
 export const loginUserAPI = async (username, pass_hash) => {
   return await callApi({ endpoint: 'login', method: 'post', body: { username, pass_hash: sha1(pass_hash) } })
 }
