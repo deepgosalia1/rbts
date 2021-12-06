@@ -43,10 +43,12 @@
    *  "styled-components": "^5.3.3"
    *  "web-vitals": "^1.1.2"
 * Python3 Packages:
-  * flask,flask-cors
+  * flask
+  * flask-cors
   * pyodbc
   * pandas
   * jsonify from flask
+  * request from flask
   * requests
   * apscheduler
 
